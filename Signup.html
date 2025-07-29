@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Smart Track - Sign Up</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <style>
+    /* Base page styling */
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #f0f2f5;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+    }
+
+    /* Sign-up form card */
+    .card {
+      background-color: #ffffff;
+      padding: 40px 30px;
+      border-radius: 12px;
+      width: 100%;
+      max-width: 400px;
+      box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
+      z-index: 1; /* Form above the background images */
+      position: relative;
+    }
+
+    h2 {
+      text-align: center;
+      color: #333;
+    }
+
+    /* Input fields */
+    input[type="text"], input[type="email"], input[type="password"] {
+      width: 100%;
+      padding: 12px;
+      margin: 12px 0;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      background: #f9f9f9;
+      font-size: 16px;
+    }
+
+    /* Focused field styling */
+    input:focus {
+      border-color: #04AA6D;
+      outline: none;
+      background: #fff;
+    }
+
+    /* Submit button */
+    button {
+      width: 100%;
+      background-color: #04AA6D;
+      color: white;
+      padding: 14px;
+      margin-top: 20px;
+      border: none;
+      border-radius: 8px;
+      font-size: 16px;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background-color: #039e64;
+    }
+
+    /* Link to login */
+    .login-link {
+      text-align: center;
+      margin-top: 20px;
+      font-size: 14px;
+      color: #666;
+    }
+
+    .login-link a {
+      color: dodgerblue;
+      text-decoration: none;
+    }
+
+    .login-link a:hover {
+      text-decoration: underline;
+    }
+
+    /* Corner logo styling */
+    .corner-img {
+      position: absolute;
+      z-index: 0;
+      opacity: 0.95;
+    }
+
+    .top-left {
+      top: 10px;
+      left: 10px;
+      height: 60px;
+    }
+
+    .top-right {
+      top: 10px;
+      right: 10px;
+      height: 60px;
+    }
+
+    .bottom-left {
+      bottom: 10px;
+      left: 10px;
+      height: 60px;
+    }
+
+    .bottom-right {
+      bottom: 10px;
+      right: 10px;
+      height: 60px;
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- Four corner images -->
+  <img src="Smart Track.png" alt="Top Left Logo" class="corner-img top-left">
+  <img src="Swadam.png" alt="Top Right Logo" class="corner-img top-right">
+  <img src="Smart Track.png" alt="Bottom Left Logo" class="corner-img bottom-left">
+  <img src="Swadam.png" alt="Bottom Right Logo" class="corner-img bottom-right">
+
+  <!-- Sign-up form card -->
+  <div class="card">
+    <h2>Create Your Account</h2>
+
+    <!-- Signup form -->
+    <form action="/signup" method="post">
+      <input type="text" name="fullname" placeholder="Full Name" required>
+      <input type="email" name="email" placeholder="Email" required>
+      <input type="password" name="password" placeholder="Password" required>
+      <button type="submit">Sign Up</button>
+    </form>
+
+    <!-- Link back to login page -->
+    <div class="login-link">
+      Already have an account? <a href="login.html">Log In</a>
+    </div>
+  </div>
+
+</body>
+</html>
