@@ -120,7 +120,7 @@
   </style>
 </head>
 
-<body>
+<body style="background-color: black;">
 
   <!-- Four corner images -->
   <img src="Smart Track.png" alt="Top Left Logo" class="corner-img top-left">
@@ -137,6 +137,10 @@
       <input type="text" name="fullname" placeholder="Full Name" required>
       <input type="email" name="email" placeholder="Email" required>
       <input type="password" name="password" placeholder="Password" required>
+      <!-- Show Password toggle -->
+      <div style="margin-top: 8px;">
+      <input type="checkbox" id="togglePassword" onclick="togglePasswordVisibility()">
+      <label for="togglePassword" style="color: black; font-size: 14px;">Show Password</label>
       <button type="submit">Sign Up</button>
     </form>
 
