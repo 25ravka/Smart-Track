@@ -1,8 +1,171 @@
 <!DOCTYPE html>
-<html>
-    <title> Login Page</title>
-</html>
-<body>
-    <h1> Login</h1>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Smart Track - Login</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <style>
+    /* Set base font and background styles */
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #f0f2f5;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+    }
+
+    /* Style for the login form card */
+    .card {
+      background-color: #161616; /*black????*/
+      padding: 50px 50px; /*40 and 30*/
+      border-radius: 12px;
+      width: 100%;
+      max-width: 400px; /* originally 400px*/
+      box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
+      z-index: 1; /* Keep form above background images */
+      position: relative;
+    }
+
+    /* Heading */
+    h2 {
+      text-align: center;
+      color: #333;
+    }
+
+    /* Input fields */
+    input[type="text"], input[type="password"] {
+      width: 100%;
+      padding: 12px;
+      margin: 12px 0;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      background: #f9f9f9;
+      font-size: 16px;
+    }
+
+    /* Focused input field */
+    input:focus {
+      border-color: #04AA6D;
+      outline: none;
+      background: #fff;
+    }
+
+    /* Login button */
+    button {
+      width: 100%;
+      background-color: #04AA6D;
+      color: white;
+      padding: 14px;
+      margin-top: 20px;
+      border: 0;
+      border-radius: 8px;
+      font-size: 16px;
+      cursor: pointer;
+      box-shadow: 0 9px #999;
+    }
+    .button:active {
+  background-color: #3e8e41;
+  box-shadow: 0 5px #666;
+  transform: translateY(4px);
+}
+    /* Button hover effect */
+    button:hover {
+      background-color: #039e64;
+    }
+
+    /* Signup link text */
+    .signup-link {
+      text-align: center;
+      margin-top: 20px;
+      font-size: 14px;
+      color: #666;
+    }
+
+    /* Link styling */
+    .signup-link a {
+      color: dodgerblue;
+      text-decoration: none;
+    }
+
+    .signup-link a:hover {
+      text-decoration: underline;
+    }
+
+    /* Positioning for the corner logos */
+    .corner-img {
+      position: absolute;
+      z-index: 1; /* Behind form  --------- changed this 0*/
+      opacity: 0.95;
+    }
+
+    /* Top-left image */
+    .top-left {
+      top: 10px;
+      left: 10px;
+      height: 60px;
+    }
+
+    /* Top-right image */
+    .top-right {
+      top: 10px;
+      right: 10px;
+      height: 60px;
+    }
+
+    /* Bottom-left image */
+    .bottom-left {
+      bottom: 10px;
+      left: 10px;
+      height: 60px;
+    }
+
+    /* Bottom-right image */
+    .bottom-right {
+      bottom: 10px;
+      right: 10px;
+      height: 60px;
+    }
+  </style>
+</head>
+
+<body style="background-color: black;">
+
+  <!-- Four corner logos -->
+  <!-- Make sure these image files are in the same folder or update the path -->
+  <img src="Smart Track.png" alt="Top Left Logo" class="corner-img top-left">
+  <img src="Swadam.png" alt="Top Right Logo" class="corner-img top-right">
+  <img src="Smart Track.png" alt="Bottom Left Logo" class="corner-img bottom-left">
+  <img src="Swadam.png" alt="Bottom Right Logo" class="corner-img bottom-right">
+
+  <!-- Login form container -->
+  <div class="card">
+    <h2>Smart Track Login</h2>
+
+    <!-- Login form -->
+    <form action="/login" method="post">
+      <!-- Email input -->
+      <input type="text" name="email" placeholder="Email" required>
+
+      <!-- Password input -->
+      <input type="password" name="password" placeholder="Password" required>
+      <!-- Show Password toggle -->
+      <div style="margin-top: 8px;">
+      <input type="checkbox" id="togglePassword" onclick="togglePasswordVisibility()">
+      <label for="togglePassword" style="color: white; font-size: 14px;">Show Password</label>
+
+      <!-- Submit button -->
+      <button type="submit">Log In</button>
+    </form>
+
+    <!-- Link to signup page if user doesn't have an account -->
+    <div class="signup-link">
+      Don't have an account? <a href="signup.html">Sign Up</a>
+    </div>
+  </div>
+
 </body>
 </html>
