@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Two Factor Authentication - Swadam</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #000000;
+            color: white;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+        }
+
+        /* Corner Logos */
+        .corner-logo {
+            position: absolute;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            z-index: 10;
+        }
+
+        .top-left {
+            top: 30px;
+            left: 30px;
+        }
+
+        .top-right {
+            top: 30px;
+            right: 30px;
+        }
+
+        .bottom-left {
+            bottom: 30px;
+            left: 30px;
+        }
+
+        .bottom-right {
+            bottom: 30px;
+            right: 30px;
+        }
+
+        .swadam-logo {
+            height: 80px;
+            width: auto;
+            object-fit: contain;
+        }
+
+        .smart-track-logo {
+            height: 60px;
+            width: auto;
+            object-fit: contain;
+        }
+
+        /* Main Content */
+        .main-container {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 40px;
+        }
+
+        .auth-form {
+            text-align: center;
+            max-width: 500px;
+            width: 100%;
+        }
+
+        .main-title {
+            font-size: 36px;
+            font-weight: 300;
+            margin-bottom: 20px;
+            color: white;
+        }
+
+        .subtitle {
+            font-size: 18px;
+            color: #cccccc;
+            margin-bottom: 40px;
+            font-weight: 300;
+        }
+
+        .form-group {
+            margin-bottom: 30px;
+            text-align: left;
+        }
+
+        .form-label {
+            display: block;
+            font-size: 18px;
+            color: white;
+            margin-bottom: 12px;
+            font-weight: 400;
+        }
+
+        .email-input {
+            width: 100%;
+            height: 50px;
+            background: #cccccc;
+            border: none;
+            border-radius: 4px;
+            padding: 0 15px;
+            font-size: 16px;
+            color: #333;
+        }
+
+        .email-input:focus {
+            outline: 2px solid #0066cc;
+            background: #ffffff;
+        }
+
+        .code-container {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            margin-top: 12px;
+        }
+
+        .code-input {
+            width: 70px;
+            height: 70px;
+            background: #cccccc;
+            border: none;
+            border-radius: 4px;
+            text-align: center;
+            font-size: 24px;
+            font-weight: bold;
+            color: #333;
+        }
+
+        .code-input:focus {
+            outline: 2px solid #0066cc;
+            background: #ffffff;
+        }
+
+        .enter-button {
+            background: white;
+            color: #000;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 25px;
+            font-size: 18px;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 40px;
+            transition: all 0.3s ease;
+        }
+
+        .enter-button:hover {
+            background: #f0f0f0;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(255, 255, 255, 0.2);
+        }
+
+        .enter-button:active {
+            transform: translateY(0);
+        }
+
+        /* Mobile Responsive */
+        @media (max-width: 768px) {
+            .corner-logo {
+                font-size: 0.8em;
+            }
+
+            .swadam-logo {
+                height: 60px;
+            }
+
+            .smart-track-logo {
+                height: 45px;
+            }
+
+            .main-title {
+                font-size: 28px;
+            }
+
+            .subtitle {
+                font-size: 16px;
+            }
+
+            .code-container {
+                gap: 10px;
+            }
+
+            .code-input {
+                width: 50px;
+                height: 50px;
+                font-size: 20px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .corner-logo {
+                position: relative;
+                margin: 20px;
+            }
+
+            .top-left, .top-right {
+                position: relative;
+                top: auto;
+                left: auto;
+                right: auto;
+            }
+
+            .bottom-left, .bottom-right {
+                display: none;
+            }
+
+            .swadam-logo {
+                height: 50px;
+            }
+
+            .smart-track-logo {
+                height: 40px;
+            }
+
+            .code-input {
+                width: 45px;
+                height: 45px;
+                font-size: 18px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Corner Logos -->
+    <div class="corner-logo top-left">
+        <img src="Swadam.png" alt="Swadam Logo" class="swadam-logo">
+    </div>
+
+    <div class="corner-logo top-right">
+        <img src="Swadam.png" alt="Swadam Logo" class="swadam-logo">
+    </div>
+
+    <div class="corner-logo bottom-left">
+        <img src="Smart Track.png" alt="Smart Track Logo" class="smart-track-logo">
+    </div>
+
+    <div class="corner-logo bottom-right">
+        <img src="Smart Track.png" alt="Smart Track Logo" class="smart-track-logo">
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-container">
+        <div class="auth-form">
+            <h1 class="main-title">Two Factor Authentication</h1>
+            <p class="subtitle">Enter the code sent to your email</p>
+
+            <form onsubmit="handleSubmit(event)">
+                <div class="form-group">
+                    <label class="form-label">Enter Email:</label>
+                    <input type="email" class="email-input" placeholder="your.email@example.com" required>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Enter Code:</label>
+                    <div class="code-container">
+                        <input type="text" class="code-input" maxlength="1" oninput="moveToNext(this, 0)">
+                        <input type="text" class="code-input" maxlength="1" oninput="moveToNext(this, 1)">
+                        <input type="text" class="code-input" maxlength="1" oninput="moveToNext(this, 2)">
+                        <input type="text" class="code-input" maxlength="1" oninput="moveToNext(this, 3)">
+                        <input type="text" class="code-input" maxlength="1" oninput="moveToNext(this, 4)">
+                    </div>
+                </div>
+
+                <button type="submit" class="enter-button">Enter</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        function moveToNext(current, index) {
+            const inputs = document.querySelectorAll('.code-input');
+            
+            // Auto-move to next input
+            if (current.value.length === 1 && index < inputs.length - 1) {
+                inputs[index + 1].focus();
+            }
+            
+            // Move back on backspace
+            current.addEventListener('keydown', function(e) {
+                if (e.key === 'Backspace' && current.value === '' && index > 0) {
+                    inputs[index - 1].focus();
+                }
+            });
+        }
+
+        function handleSubmit(event) {
+            event.preventDefault();
+            
+            const email = document.querySelector('.email-input').value;
+            const codeInputs = document.querySelectorAll('.code-input');
+            const code = Array.from(codeInputs).map(input => input.value).join('');
+            
+            if (code.length !== 5) {
+                alert('Please enter the complete 5-digit code');
+                return;
+            }
+            
+            // Simulate authentication
+            const button = document.querySelector('.enter-button');
+            button.textContent = 'Verifying...';
+            button.disabled = true;
+            
+            setTimeout(() => {
+                alert(`Authentication successful!\nEmail: ${email}\nCode: ${code}`);
+                button.textContent = 'Enter';
+                button.disabled = false;
+            }, 1500);
+        }
+
+        // Add number-only restriction to code inputs
+        document.querySelectorAll('.code-input').forEach(input => {
+            input.addEventListener('input', function(e) {
+                this.value = this.value.replace(/[^0-9]/g, '');
+            });
+        });
+
+        // Focus first code input when page loads
+        window.addEventListener('load', function() {
+            document.querySelector('.code-input').focus();
+        });
+    </script>
+</body>
+</html>
