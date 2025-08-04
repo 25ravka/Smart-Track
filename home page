@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Smart Track Dashboard</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: #000;
+      color: white;
+      height: 100vh;
+      overflow: hidden;
+    }
+
+    .container {
+      display: flex;
+      height: 100vh;
+      width: 100vw;
+    }
+
+    /* Sidebar */
+    .sidebar {
+      width: 25%;
+      background: #3d3d3d;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .nav-item {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.4vw;
+      font-weight: 500;
+      text-align: center;
+      color: #1a1a1a;
+      background: #666;
+      border-bottom: 1px solid #444;
+      cursor: pointer;
+      transition: background 0.3s ease;
+    }
+
+    .nav-item:hover {
+      background: #888;
+    }
+
+    .nav-item.active {
+      background: #bbb;
+      font-weight: bold;
+    }
+
+    /* Main Content */
+    .main-content {
+      flex: 1;
+      background: #000;
+      position: relative;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .header {
+      position: absolute;
+      top: 20px;
+      right: 30px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .header img {
+      height: 30px;
+    }
+
+    .header span {
+      font-size: 20px;
+      font-weight: 600;
+    }
+
+    .center-logo img {
+      max-width: 90%;
+      max-height: 80%;
+      object-fit: contain;
+    }
+
+    /* Responsive adjustments */
+    @media (max-width: 768px) {
+      .container {
+        flex-direction: column;
+      }
+
+      .sidebar {
+        width: 100%;
+        height: auto;
+        flex-direction: row;
+        overflow-x: auto;
+      }
+
+      .nav-item {
+        flex: 1;
+        min-width: 120px;
+        font-size: 16px;
+        border-right: 1px solid #444;
+        border-bottom: none;
+      }
+
+      .main-content {
+        height: calc(100vh - 60px);
+      }
+
+      .header {
+        top: 10px;
+        right: 10px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <!-- Sidebar -->
+    <div class="sidebar">
+      <div class="nav-item active" onclick="setActive(this)">Inventory</div>
+      <div class="nav-item" onclick="setActive(this)">Client<br>Records</div>
+      <div class="nav-item" onclick="setActive(this)">Progress<br>Check</div>
+      <div class="nav-item" onclick="setActive(this)">Turnover<br>Frame-rate</div>
+      <div class="nav-item" onclick="setActive(this)">Loyalty<br>Program</div>
+      <div class="nav-item" onclick="setActive(this)">Exit App</div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+      <!-- Top Right Logo -->
+      <div class="header">
+        <img src="Smart Track.png"/>
+      </div>
+
+      <!-- Center Logo -->
+      <div class="center-logo">
+        <img src="Swadam.png"/>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function setActive(element) {
+      document.querySelectorAll('.nav-item').forEach(item => {
+        item.classList.remove('active');
+      });
+      element.classList.add('active');
+    }
+  </script>
+</body>
+</html>
