@@ -31,23 +31,23 @@
         }
 
         .top-left {
-            top: 30px;
-            left: 30px;
+            top: 20px;
+            left: 20px;
         }
 
         .top-right {
-            top: 30px;
-            right: 30px;
+            top: 20px;
+            right: 20px;
         }
 
         .bottom-left {
-            bottom: 30px;
-            left: 30px;
+            bottom: 20px;
+            left: 20px;
         }
 
         .bottom-right {
-            bottom: 30px;
-            right: 30px;
+            bottom: 20px;
+            right: 20px;
         }
 
         .swadam-logo {
@@ -57,7 +57,7 @@
         }
 
         .smart-track-logo {
-            height: 60px;
+            height: 50px;
             width: auto;
             object-fit: contain;
         }
