@@ -29,14 +29,7 @@
             z-index: 1000;
         }
 
-        .menu-toggle {
-            background: none;
-            border: none;
-            color: white;
-            font-size: 20px;
-            cursor: pointer;
-            padding: 5px;
-        }
+
 
         .header-title {
             flex-grow: 1;
@@ -68,10 +61,6 @@
             transition: left 0.3s ease;
             z-index: 1001;
             overflow-y: auto;
-        }
-
-        .side-menu.open {
-            left: 0;
         }
 
         .side-menu.hover-open {
@@ -122,11 +111,6 @@
             visibility: hidden;
             transition: opacity 0.3s ease, visibility 0.3s ease;
             z-index: 999;
-        }
-
-        .overlay.show {
-            opacity: 1;
-            visibility: visible;
         }
 
         /* Main Content */
@@ -264,7 +248,7 @@
 <body>
     <!-- Header -->
     <div class="header">
-        <button class="menu-toggle" onclick="toggleMenu()">☰</button>
+        <div style="width: 30px;"></div>
         <div class="header-title">Business Dashboard</div>
         <div style="width: 30px;"></div>
     </div>
@@ -273,7 +257,7 @@
     <div class="hover-trigger" onmouseenter="showMenuOnHover()" onmouseleave="hideMenuOnHover()"></div>
 
     <!-- Overlay -->
-    <div class="overlay" onclick="closeMenu()"></div>
+    <div class="overlay"></div>
 
     <!-- Side Menu -->
     <div class="side-menu" id="sideMenu" onmouseenter="keepMenuOpen()" onmouseleave="hideMenuOnLeave()">
@@ -325,52 +309,20 @@
     </div>
 
     <script>
-        let menuOpen = false;
         let discountActive = true;
         let hoverTimeout;
 
-        function toggleMenu() {
-            const sideMenu = document.getElementById('sideMenu');
-            const overlay = document.querySelector('.overlay');
-            
-            menuOpen = !menuOpen;
-            
-            if (menuOpen) {
-                sideMenu.classList.add('open');
-                sideMenu.classList.remove('hover-open');
-                overlay.classList.add('show');
-            } else {
-                sideMenu.classList.remove('open');
-                sideMenu.classList.remove('hover-open');
-                overlay.classList.remove('show');
-            }
-        }
-
-        function closeMenu() {
-            const sideMenu = document.getElementById('sideMenu');
-            const overlay = document.querySelector('.overlay');
-            
-            menuOpen = false;
-            sideMenu.classList.remove('open');
-            sideMenu.classList.remove('hover-open');
-            overlay.classList.remove('show');
-        }
-
         function showMenuOnHover() {
-            if (!menuOpen) {
-                const sideMenu = document.getElementById('sideMenu');
-                sideMenu.classList.add('hover-open');
-                clearTimeout(hoverTimeout);
-            }
+            const sideMenu = document.getElementById('sideMenu');
+            sideMenu.classList.add('hover-open');
+            clearTimeout(hoverTimeout);
         }
 
         function hideMenuOnHover() {
-            if (!menuOpen) {
-                hoverTimeout = setTimeout(() => {
-                    const sideMenu = document.getElementById('sideMenu');
-                    sideMenu.classList.remove('hover-open');
-                }, 300);
-            }
+            hoverTimeout = setTimeout(() => {
+                const sideMenu = document.getElementById('sideMenu');
+                sideMenu.classList.remove('hover-open');
+            }, 300);
         }
 
         function keepMenuOpen() {
@@ -378,12 +330,10 @@
         }
 
         function hideMenuOnLeave() {
-            if (!menuOpen) {
-                hoverTimeout = setTimeout(() => {
-                    const sideMenu = document.getElementById('sideMenu');
-                    sideMenu.classList.remove('hover-open');
-                }, 300);
-            }
+            hoverTimeout = setTimeout(() => {
+                const sideMenu = document.getElementById('sideMenu');
+                sideMenu.classList.remove('hover-open');
+            }, 300);
         }
 
         function toggleDiscount() {
@@ -397,7 +347,7 @@
             }
         }
 
-        // Close menu when clicking on menu items
+        // Handle menu item clicks
         document.querySelectorAll('.menu-item').forEach(item => {
             item.addEventListener('click', function(e) {
                 if (this.textContent === 'Exit App') {
@@ -406,15 +356,18 @@
                         window.close();
                     }
                 } else {
-                    closeMenu();
+                    // Just hide the menu after clicking a menu item
+                    const sideMenu = document.getElementById('sideMenu');
+                    sideMenu.classList.remove('hover-open');
                 }
             });
         });
 
         // Close menu on escape key
         document.addEventListener('keydown', function(e) {
-            if (e.key === 'Escape' && (menuOpen || document.getElementById('sideMenu').classList.contains('hover-open'))) {
-                closeMenu();
+            if (e.key === 'Escape') {
+                const sideMenu = document.getElementById('sideMenu');
+                sideMenu.classList.remove('hover-open');
             }
         });
     </script>
