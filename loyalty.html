@@ -60,7 +60,7 @@
 
         .menu-item {
             display: block;
-            padding: 25px 20px;
+            padding: 40px 20px;
             color: white;
             text-decoration: none;
             text-align: center;
@@ -68,6 +68,10 @@
             background-color: #555;
             margin: 1px 0;
             transition: background-color 0.3s ease;
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
         .menu-item:hover {
@@ -75,7 +79,7 @@
         }
 
         .menu-item.exit {
-            margin-top: auto;
+            margin-top: 0;
             background-color: #555;
         }
 
@@ -255,6 +259,7 @@
     <!-- Side Menu -->
     <div class="side-menu" id="sideMenu" onmouseenter="keepMenuOpen()" onmouseleave="hideMenuOnLeave()">
         <div class="menu-header">Inventory</div>
+        <a href="#" class="menu-item">Home</a>
         <a href="#" class="menu-item">Client<br>Records</a>
         <a href="#" class="menu-item">Progress<br>Check</a>
         <a href="#" class="menu-item">Turnover<br>Frame-rate</a>
