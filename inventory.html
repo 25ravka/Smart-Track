@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inventory - Smart Track</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #1a1a1a;
+            color: white;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        .container {
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+        }
+
+        /* Hidden Sidebar */
+        .sidebar-trigger {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 20px;
+            height: 100vh;
+            z-index: 1000;
+            background: transparent;
+        }
+
+        .sidebar {
+            position: fixed;
+            top: 0;
+            left: -300px;
+            width: 300px;
+            height: 100vh;
+            background: linear-gradient(180deg, #d0d0d0 0%, #a0a0a0 100%);
+            z-index: 999;
+            transition: left 0.3s ease-in-out;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 2px 0 10px rgba(0, 0, 0, 0.3);
+        }
+
+        .sidebar.show {
+            left: 0;
+        }
+
+        .sidebar-item {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #333;
+            font-size: 18px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.3s ease;
+            border-bottom: 2px solid #888;
+            text-align: center;
+            padding: 20px;
+        }
+
+        .sidebar-item:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .sidebar-item.active {
+            background: rgba(196, 68, 68, 0.2);
+            color: #c44444;
+        }
+
+        .sidebar-item:last-child {
+            border-bottom: none;
+        }
+
+        /* Top Navigation Bar */
+        .top-nav {
+            background: #333333;
+            padding: 15px 20px;
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+            border-bottom: 2px solid #444;
+        }
+
+        .smart-track-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 24px;
+            font-weight: 600;
+        }
+
+        .smart-track-logo {
+            height: 40px;
+            width: auto;
+        }
+
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+        }
+
+        /* Table Container */
+        .table-container {
+            flex: 1;
+            overflow-y: auto;
+            overflow-x: auto;
+            background: #f5f5f5;
+            max-height: calc(100vh - 180px);
+        }
+
+        .inventory-table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+        }
+
+        .table-header {
+            background: #c44444;
+            color: white;
+            font-weight: 600;
+            font-size: 16px;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+
+        .table-header th {
+            padding: 15px 20px;
+            text-align: left;
+            border: 2px solid #333;
+            min-width: 120px;
+        }
+
+        .table-header th:first-child {
+            min-width: 200px;
+        }
+
+        .inventory-table tbody tr {
+            background: #f0f0f0;
+            height: 45px;
+        }
+
+        .inventory-table tbody tr:nth-child(even) {
+            background: #e8e8e8;
+        }
+
+        .inventory-table tbody tr:hover {
+            background: #d0d0d0;
+        }
+
+        .inventory-table td {
+            padding: 12px 20px;
+            border: 2px solid #333;
+            font-size: 14px;
+            color: #333;
+        }
+
+        .inventory-table td input {
+            width: 100%;
+            border: none;
+            background: transparent;
+            color: #333;
+            font-size: 14px;
+            padding: 5px;
+        }
+
+        .inventory-table td input:focus {
+            outline: 2px solid #0066cc;
+            background: white;
+            border-radius: 3px;
+        }
+
+        /* Bottom Section */
+        .bottom-section {
+            background: #333333;
+            padding: 15px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-top: 2px solid #444;
+        }
+
+        .edit-button {
+            background: #c44444;
+            color: white;
+            padding: 10px 25px;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+
+        .edit-button:hover {
+            background: #d55555;
+        }
+
+        .swadam-logo {
+            height: 55px;
+            width: auto;
+        }
+
+        /* Mobile Responsive */
+        @media (max-width: 768px) {
+            .nav-sections {
+                flex-wrap: wrap;
+            }
+
+            .nav-section {
+                font-size: 12px;
+                padding: 6px 12px;
+            }
+
+            .smart-track-header {
+                font-size: 18px;
+            }
+
+            .table-container {
+                overflow-x: auto;
+            }
+
+            .inventory-table {
+                min-width: 600px;
+            }
+
+            .table-header th {
+                padding: 10px 15px;
+                font-size: 14px;
+            }
+
+            .inventory-table td {
+                padding: 8px 15px;
+                font-size: 12px;
+            }
+
+            .sidebar {
+                width: 250px;
+                left: -250px;
+            }
+
+            .sidebar-item {
+                font-size: 16px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Hidden Sidebar -->
+        <div class="sidebar-trigger" id="sidebarTrigger"></div>
+        <div class="sidebar" id="sidebar">
+            <div class="sidebar-item" data-page="homepage.html">Home</div>
+            <div class="sidebar-item active" data-page="inventory.html">Inventory</div>
+            <div class="sidebar-item" data-page="client record.html">Client<br>Records</div>
+            <div class="sidebar-item" data-page="progress check.html">Progress<br>Check</div>
+            <div class="sidebar-item" data-page="turnover.html">Turnover<br>Frame-rate</div>
+            <div class="sidebar-item" data-page="loyalty.html">Loyalty<br>Program</div>
+            <div class="sidebar-item" data-page="exit" onclick="exitApp()">Exit App</div>
+        </div>
+
+        <!-- Top Navigation -->
+        <div class="top-nav">
+            <div class="smart-track-header">
+                <img src="Smart Track.png" alt="Smart Track" class="smart-track-logo">
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <!-- Table Container -->
+            <div class="table-container">
+                <table class="inventory-table">
+                    <thead class="table-header">
+                        <tr>
+                            <th>Name</th>
+                            <th>Quantity</th>
+                            <th>Price</th>
+                            <th>Expiry</th>
+                            <th>Manufacture date</th>
+                        </tr>
+                    </thead>
+                    <tbody id="inventoryBody">
+                        <!-- Empty rows will be generated by JavaScript -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Bottom Section -->
+        <div class="bottom-section">
+            <button class="edit-button" onclick="toggleEditMode()">Edit Inventory Items</button>
+            <img src="Swadam.png" alt="Swadam" class="swadam-logo">
+        </div>
+    </div>
+
+    <script>
+        let editMode = false;
+
+        // Sidebar functionality
+        const sidebar = document.getElementById('sidebar');
+        const sidebarTrigger = document.getElementById('sidebarTrigger');
+        let sidebarTimeout;
+
+        // Show sidebar when mouse enters trigger area
+        sidebarTrigger.addEventListener('mouseenter', () => {
+            clearTimeout(sidebarTimeout);
+            sidebar.classList.add('show');
+        });
+
+        // Hide sidebar when mouse leaves both trigger and sidebar
+        function hideSidebar() {
+            sidebarTimeout = setTimeout(() => {
+                sidebar.classList.remove('show');
+            }, 300);
+        }
+
+        sidebarTrigger.addEventListener('mouseleave', hideSidebar);
+        sidebar.addEventListener('mouseleave', hideSidebar);
+
+        // Keep sidebar open when mouse is over it
+        sidebar.addEventListener('mouseenter', () => {
+            clearTimeout(sidebarTimeout);
+        });
+
+        // Navigation functionality
+        function navigateTo(page) {
+            window.location.href = page;
+        }
+
+        // Sidebar item click handlers
+        document.querySelectorAll('.sidebar-item').forEach(item => {
+            item.addEventListener('click', function() {
+                if (this.dataset.page === 'exit') return;
+                
+                // Navigate to the page
+                if (this.dataset.page) {
+                    navigateTo(this.dataset.page);
+                }
+                
+                // Hide sidebar after selection
+                setTimeout(() => {
+                    sidebar.classList.remove('show');
+                }, 500);
+            });
+        });
+
+        // Exit app function
+        function exitApp() {
+            if (confirm('Are you sure you want to exit the application?')) {
+                window.close();
+            }
+        }
+
+        // Generate empty table rows (more rows for scrolling)
+        function generateRows() {
+            const tbody = document.getElementById('inventoryBody');
+            tbody.innerHTML = '';
+            
+            for (let i = 0; i < 50; i++) {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td><input type="text" placeholder="" ${editMode ? '' : 'readonly'}></td>
+                    <td><input type="number" placeholder="" ${editMode ? '' : 'readonly'}></td>
+                    <td><input type="text" placeholder="" ${editMode ? '' : 'readonly'}></td>
+                    <td><input type="date" placeholder="" ${editMode ? '' : 'readonly'}></td>
+                    <td><input type="date" placeholder="" ${editMode ? '' : 'readonly'}></td>
+                `;
+                tbody.appendChild(row);
+            }
+        }
+
+        // Toggle edit mode
+        function toggleEditMode() {
+            editMode = !editMode;
+            const button = document.querySelector('.edit-button');
+            
+            if (editMode) {
+                button.textContent = 'Save Changes';
+                button.style.background = '#28a745';
+            } else {
+                button.textContent = 'Edit Inventory Items';
+                button.style.background = '#c44444';
+                saveData();
+            }
+            
+            generateRows();
+        }
+
+        // Save data function
+        function saveData() {
+            const inputs = document.querySelectorAll('input');
+            const data = [];
+            
+            inputs.forEach(input => {
+                if (input.value.trim() !== '') {
+                    data.push({
+                        type: input.type,
+                        value: input.value
+                    });
+                }
+            });
+            
+            if (data.length > 0) {
+                console.log('Inventory data saved:', data);
+                // Here you would typically send data to a server
+                alert('Inventory data saved successfully!');
+            }
+        }
+
+        // Initialize table
+        generateRows();
+
+        // Auto-save functionality when in edit mode
+        document.addEventListener('input', function(e) {
+            if (editMode && e.target.tagName === 'INPUT') {
+                // Auto-save after 2 seconds of no typing
+                clearTimeout(window.autoSaveTimer);
+                window.autoSaveTimer = setTimeout(() => {
+                    console.log('Auto-saving...');
+                }, 2000);
+            }
+        });
+    </script>
+</body>
+</html>

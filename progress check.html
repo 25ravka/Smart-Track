@@ -1,0 +1,583 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Progress Check - Smart Track</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+            height: 100vh;
+            display: flex;
+            overflow-x: hidden;
+        }
+
+        /* Hidden side menu */
+        .side-menu-trigger {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 20px;
+            height: 100vh;
+            z-index: 1001;
+            background: transparent;
+        }
+
+        .side-menu {
+            position: fixed;
+            top: 0;
+            left: -300px;
+            width: 300px;
+            height: 100vh;
+            background: linear-gradient(180deg, #e8b5b5 0%, #f5f5f5 10%, #f0f0f0 100%);
+            transition: left 0.3s ease;
+            z-index: 1000;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 2px 0 10px rgba(0,0,0,0.3);
+        }
+
+        .side-menu.open {
+            left: 0;
+        }
+
+        .side-menu-item {
+            padding: 25px 20px;
+            text-align: center;
+            color: #444;
+            font-weight: 500;
+            font-size: 16px;
+            border-bottom: 1px solid #ddd;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .side-menu-item:hover {
+            background-color: rgba(255, 255, 255, 0.3);
+        }
+
+        .side-menu-item.active {
+            background: linear-gradient(180deg, #d4a5a5 0%, #c49999 100%);
+            color: #8b4444;
+            font-weight: bold;
+            font-size: 18px;
+        }
+
+        /* Overlay */
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.3);
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s, visibility 0.3s;
+            z-index: 999;
+        }
+
+        .overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .container {
+            display: flex;
+            width: 100%;
+            height: 100vh;
+            border: 3px solid #000;
+            transition: margin-left 0.3s ease;
+        }
+
+        .left-panel {
+            width: 310px;
+            background-color: #d3d3d3;
+            border-right: 3px solid #000;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .notifications-section {
+            flex: 1;
+            border-bottom: 3px solid #000;
+            overflow-y: auto;
+            /* Hide scrollbar */
+            scrollbar-width: none; /* Firefox */
+            -ms-overflow-style: none; /* Internet Explorer 10+ */
+        }
+
+        .notifications-section::-webkit-scrollbar {
+            display: none; /* Safari and Chrome */
+        }
+
+        .pending-section {
+            flex: 1;
+            border-bottom: 3px solid #000;
+            overflow-y: auto;
+            /* Hide scrollbar */
+            scrollbar-width: none; /* Firefox */
+            -ms-overflow-style: none; /* Internet Explorer 10+ */
+        }
+
+        .pending-section::-webkit-scrollbar {
+            display: none; /* Safari and Chrome */
+        }
+
+        .completed-section {
+            flex: 1;
+            overflow-y: auto;
+            /* Hide scrollbar */
+            scrollbar-width: none; /* Firefox */
+            -ms-overflow-style: none; /* Internet Explorer 10+ */
+        }
+
+        .completed-section::-webkit-scrollbar {
+            display: none; /* Safari and Chrome */
+        }
+
+        .section-title {
+            background-color: #b8b8b8;
+            padding: 12px;
+            text-align: center;
+            font-weight: bold;
+            border-bottom: 3px solid #000;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+
+        .section-content {
+            padding: 10px;
+            height: calc(100% - 45px);
+            overflow-y: auto;
+            /* Hide scrollbar */
+            scrollbar-width: none; /* Firefox */
+            -ms-overflow-style: none; /* Internet Explorer 10+ */
+        }
+
+        .section-content::-webkit-scrollbar {
+            display: none; /* Safari and Chrome */
+        }
+
+        .right-panel {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .header-row {
+            display: flex;
+            background-color: #b8b8b8;
+            border-bottom: 3px solid #000;
+            height: 45px;
+        }
+
+        .business-header {
+            flex: 2;
+            padding: 20px;
+            text-align: center;
+            font-weight: bold;
+            border-right: 3px solid #000;
+            width: calc(66.67%);
+            position: relative;
+        }
+
+        .edit-btn {
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: #4CAF50;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
+        }
+
+        .edit-btn:hover {
+            background: #45a049;
+        }
+
+        .progress-header {
+            flex: 1;
+            padding: 10px;
+            text-align: center;
+            font-weight: bold;
+            width: calc(33.33%);
+        }
+
+        .scrollable-content {
+            flex: 1;
+            display: flex;
+            overflow: hidden;
+            border-top: 0;
+        }
+
+        .business-column {
+            flex: 2;
+            background-color: #e8e8e8;
+            border-right: 3px solid #000;
+            overflow-y: auto;
+            border-top: 0;
+            width: calc(66.67%);
+            /* Hide scrollbar */
+            scrollbar-width: none; /* Firefox */
+            -ms-overflow-style: none; /* Internet Explorer 10+ */
+        }
+
+        .business-column::-webkit-scrollbar {
+            display: none; /* Safari and Chrome */
+        }
+
+        .progress-column {
+            flex: 1;
+            background-color: #e8e8e8;
+            overflow-y: auto;
+            border-top: 0;
+            width: calc(33.33%);
+            /* Hide scrollbar */
+            scrollbar-width: none; /* Firefox */
+            -ms-overflow-style: none; /* Internet Explorer 10+ */
+        }
+
+        .progress-column::-webkit-scrollbar {
+            display: none; /* Safari and Chrome */
+        }
+
+        .progress-row {
+            justify-content: center;
+        }
+
+        .toggle-switch {
+            width: 60px;
+            height: 25px;
+            background-color: #ccc;
+            border-radius: 25px;
+            position: relative;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .toggle-switch.green {
+            background-color: #4CAF50;
+        }
+
+        .toggle-switch.red {
+            background-color: #f44336;
+        }
+
+        .toggle-slider {
+            width: 23px;
+            height: 23px;
+            background-color: white;
+            border: 1px solid #999;
+            border-radius: 50%;
+            position: absolute;
+            top: 1px;
+            left: 1px;
+            transition: transform 0.3s;
+        }
+
+        .toggle-switch.green .toggle-slider {
+            transform: translateX(35px);
+        }
+
+        .toggle-switch.red .toggle-slider {
+            transform: translateX(0px);
+        }
+
+        /* Synchronize scrolling */
+        .sync-scroll {
+            overflow-y: auto;
+        }
+
+        /* Ensure perfect alignment between columns */
+        .business-row, .progress-row {
+            height: 40px;
+            border-bottom: 1px solid #999;
+            display: flex;
+            align-items: center;
+            padding: 0 10px;
+            box-sizing: border-box;
+            min-height: 40px;
+            max-height: 40px;
+        }
+
+        .business-row input {
+            width: 100%;
+            border: none;
+            background: transparent;
+            padding: 5px;
+            font-size: 14px;
+            color: #333;
+        }
+
+        .business-row input:focus {
+            outline: 2px solid #4CAF50;
+            background: white;
+            border-radius: 3px;
+        }
+
+        .business-row input:disabled {
+            background: transparent;
+            color: #333;
+        }
+    </style>
+</head>
+<body>
+    <!-- Hover trigger zone -->
+    <div class="side-menu-trigger"></div>
+    
+    <!-- Overlay -->
+    <div class="overlay"></div>
+    
+    <!-- Hidden side menu -->
+    <div class="side-menu">
+        <div class="side-menu-item" onclick="navigateTo('homepage.html')">Home</div>
+        <div class="side-menu-item" onclick="navigateTo('inventory.html')">Inventory</div>
+        <div class="side-menu-item" onclick="navigateTo('client record.html')">Client Records</div>
+        <div class="side-menu-item active">Progress Check</div>
+        <div class="side-menu-item" onclick="navigateTo('turnover.html')">Turnover Frame-rate</div>
+        <div class="side-menu-item" onclick="navigateTo('loyalty.html')">Loyalty Program</div>
+        <div class="side-menu-item" onclick="exitApp()">Exit App</div>
+    </div>
+
+    <div class="container">
+        <div class="left-panel">
+            <div class="notifications-section">
+                <div class="section-title">Notifications of New Orders</div>
+                <div class="section-content">
+                    <!-- Notifications content can be added here -->
+                </div>
+            </div>
+            <div class="pending-section">
+                <div class="section-title">Pending Orders</div>
+                <div class="section-content">
+                    <!-- Pending orders content can be added here -->
+                </div>
+            </div>
+            <div class="completed-section">
+                <div class="section-title">Completed Orders</div>
+                <div class="section-content">
+                    <!-- Completed orders content can be added here -->
+                </div>
+            </div>
+        </div>
+
+        <div class="right-panel">
+            <div class="header-row">
+                <div class="business-header">
+                    Business Names
+                    <button class="edit-btn" onclick="toggleEditBusinessNames()">Edit</button>
+                </div>
+                <div class="progress-header">Progress</div>
+            </div>
+            <div class="scrollable-content">
+                <div class="business-column sync-scroll" id="businessColumn">
+                    <div class="business-row"><input type="text" value="Restaurant ABC" disabled></div>
+                    <div class="business-row"><input type="text" value="Cafe Deluxe" disabled></div>
+                    <div class="business-row"><input type="text" value="Pizza Palace" disabled></div>
+                    <div class="business-row"><input type="text" value="Burger Station" disabled></div>
+                    <div class="business-row"><input type="text" value="Sushi Express" disabled></div>
+                    <div class="business-row"><input type="text" value="Taco Bell" disabled></div>
+                    <div class="business-row"><input type="text" value="Coffee Corner" disabled></div>
+                    <div class="business-row"><input type="text" value="Sandwich Shop" disabled></div>
+                    <div class="business-row"><input type="text" value="Bakery Fresh" disabled></div>
+                    <div class="business-row"><input type="text" value="Noodle House" disabled></div>
+                    <div class="business-row"><input type="text" value="Grill Master" disabled></div>
+                    <div class="business-row"><input type="text" value="Dessert Haven" disabled></div>
+                    <div class="business-row"><input type="text" value="Smoothie Bar" disabled></div>
+                    <div class="business-row"><input type="text" value="Wings & Things" disabled></div>
+                    <div class="business-row"><input type="text" value="Healthy Bites" disabled></div>
+                    <div class="business-row"><input type="text" placeholder="Add new business..." disabled></div>
+                    <div class="business-row"><input type="text" placeholder="Add new business..." disabled></div>
+                    <div class="business-row"><input type="text" placeholder="Add new business..." disabled></div>
+                    <div class="business-row"><input type="text" placeholder="Add new business..." disabled></div>
+                    <div class="business-row"><input type="text" placeholder="Add new business..." disabled></div>
+                </div>
+                <div class="progress-column sync-scroll" id="progressColumn">
+                    <div class="progress-row">
+                        <div class="toggle-switch green" onclick="toggleSwitch(this)">
+                            <div class="toggle-slider"></div>
+                        </div>
+                    </div>
+                    <div class="progress-row">
+                        <div class="toggle-switch red" onclick="toggleSwitch(this)">
+                            <div class="toggle-slider"></div>
+                        </div>
+                    </div>
+                    <div class="progress-row">
+                        <div class="toggle-switch green" onclick="toggleSwitch(this)">
+                            <div class="toggle-slider"></div>
+                        </div>
+                    </div>
+                    <div class="progress-row">
+                        <div class="toggle-switch green" onclick="toggleSwitch(this)">
+                            <div class="toggle-slider"></div>
+                        </div>
+                    </div>
+                    <div class="progress-row">
+                        <div class="toggle-switch red" onclick="toggleSwitch(this)">
+                            <div class="toggle-slider"></div>
+                        </div>
+                    </div>
+                    <div class="progress-row">
+                        <div class="toggle-switch green" onclick="toggleSwitch(this)">
+                            <div class="toggle-slider"></div>
+                        </div>
+                    </div>
+                    <div class="progress-row">
+                        <div class="toggle-switch green" onclick="toggleSwitch(this)">
+                            <div class="toggle-slider"></div>
+                        </div>
+                    </div>
+                    <div class="progress-row">
+                        <div class="toggle-switch green" onclick="toggleSwitch(this)">
+                            <div class="toggle-slider"></div>
+                        </div>
+                    </div>
+                    <div class="progress-row">
+                        <div class="toggle-switch red" onclick="toggleSwitch(this)">
+                            <div class="toggle-slider"></div>
+                        </div>
+                    </div>
+                    <div class="progress-row">
+                        <div class="toggle-switch green" onclick="toggleSwitch(this)">
+                            <div class="toggle-slider"></div>
+                        </div>
+                    </div>
+                    <div class="progress-row">
+                        <div class="toggle-switch green" onclick="toggleSwitch(this)">
+                            <div class="toggle-slider"></div>
+                        </div>
+                    </div>
+                    <div class="progress-row">
+                        <div class="toggle-switch green" onclick="toggleSwitch(this)">
+                            <div class="toggle-slider"></div>
+                        </div>
+                    </div>
+                    <div class="progress-row">
+                        <div class="toggle-switch green" onclick="toggleSwitch(this)">
+                            <div class="toggle-slider"></div>
+                        </div>
+                    </div>
+                    <div class="progress-row">
+                        <div class="toggle-switch red" onclick="toggleSwitch(this)">
+                            <div class="toggle-slider"></div>
+                        </div>
+                    </div>
+                    <div class="progress-row">
+                        <div class="toggle-switch green" onclick="toggleSwitch(this)">
+                            <div class="toggle-slider"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Navigation function
+        function navigateTo(page) {
+            window.location.href = page;
+        }
+
+        // Exit app function
+        function exitApp() {
+            if (confirm('Are you sure you want to exit the application?')) {
+                window.close();
+            }
+        }
+
+        // Edit business names functionality
+        function toggleEditBusinessNames() {
+            const editBtn = event.target;
+            const isEditing = editBtn.textContent === 'Save';
+            const inputs = document.querySelectorAll('.business-row input');
+            
+            inputs.forEach(input => {
+                input.disabled = isEditing;
+            });
+            
+            editBtn.textContent = isEditing ? 'Edit' : 'Save';
+            editBtn.style.background = isEditing ? '#4CAF50' : '#ff6b35';
+        }
+
+        // Handle hover trigger for side menu
+        const hoverTrigger = document.querySelector('.side-menu-trigger');
+        const sideMenu = document.querySelector('.side-menu');
+        const overlay = document.querySelector('.overlay');
+
+        let hoverTimeout;
+
+        hoverTrigger.addEventListener('mouseenter', function() {
+            clearTimeout(hoverTimeout);
+            sideMenu.classList.add('open');
+            overlay.classList.add('active');
+        });
+
+        sideMenu.addEventListener('mouseenter', function() {
+            clearTimeout(hoverTimeout);
+        });
+
+        sideMenu.addEventListener('mouseleave', function() {
+            hoverTimeout = setTimeout(() => {
+                sideMenu.classList.remove('open');
+                overlay.classList.remove('active');
+            }, 300);
+        });
+
+        hoverTrigger.addEventListener('mouseleave', function() {
+            hoverTimeout = setTimeout(() => {
+                if (!sideMenu.matches(':hover')) {
+                    sideMenu.classList.remove('open');
+                    overlay.classList.remove('active');
+                }
+            }, 100);
+        });
+
+        // Synchronize scrolling between business names and progress columns
+        const businessColumn = document.getElementById('businessColumn');
+        const progressColumn = document.getElementById('progressColumn');
+
+        let isScrolling = false;
+
+        businessColumn.addEventListener('scroll', function() {
+            if (!isScrolling) {
+                isScrolling = true;
+                progressColumn.scrollTop = this.scrollTop;
+                setTimeout(() => { isScrolling = false; }, 10);
+            }
+        });
+
+        progressColumn.addEventListener('scroll', function() {
+            if (!isScrolling) {
+                isScrolling = true;
+                businessColumn.scrollTop = this.scrollTop;
+                setTimeout(() => { isScrolling = false; }, 10);
+            }
+        });
+
+        // Toggle switch functionality
+        function toggleSwitch(element) {
+            if (element.classList.contains('green')) {
+                element.classList.remove('green');
+                element.classList.add('red');
+            } else {
+                element.classList.remove('red');
+                element.classList.add('green');
+            }
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,583 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Client Records - Smart Track</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #000;
+            color: white;
+            overflow-x: hidden;
+        }
+
+        /* Hidden Sidebar */
+        .sidebar-trigger {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 20px;
+            height: 100vh;
+            z-index: 1001;
+            background: transparent;
+        }
+
+        .sidebar {
+            position: fixed;
+            top: 0;
+            left: -300px;
+            width: 300px;
+            height: 100vh;
+            background: linear-gradient(180deg, #e8b5b5 0%, #f5f5f5 10%, #f0f0f0 100%);
+            transition: left 0.3s ease;
+            z-index: 1000;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .sidebar.open {
+            left: 0;
+        }
+
+        .sidebar-item {
+            padding: 25px 20px;
+            text-align: center;
+            color: #444;
+            font-weight: 500;
+            font-size: 16px;
+            border-bottom: 1px solid #ddd;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .sidebar-item:hover {
+            background-color: rgba(255, 255, 255, 0.3);
+        }
+
+        .sidebar-item.active {
+            background: linear-gradient(180deg, #d4a5a5 0%, #c49999 100%);
+            color: #8b4444;
+            font-weight: bold;
+            font-size: 18px;
+        }
+
+        /* Overlay */
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s, visibility 0.3s;
+            z-index: 999;
+        }
+
+        .overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        /* Main container */
+        .main-container {
+            padding: 20px;
+            min-height: 100vh;
+            transition: margin-left 0.3s ease;
+        }
+
+        /* Content layout */
+        .content {
+            display: flex;
+            gap: 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+            height: calc(100vh - 120px);
+        }
+
+        /* Clients section */
+        .clients-section {
+            flex: 1;
+            background: #f0f0f0;
+            border-radius: 10px;
+            padding: 0;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .clients-header {
+            background: #d0d0d0;
+            padding: 15px;
+            text-align: center;
+            color: #333;
+            font-weight: bold;
+            font-size: 18px;
+            position: relative;
+        }
+
+        .edit-btn {
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: #4CAF50;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
+        }
+
+        .edit-btn:hover {
+            background: #45a049;
+        }
+
+        .table-container {
+            flex: 1;
+            overflow-y: auto;
+            max-height: 500px;
+        }
+
+        .clients-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .clients-table th {
+            background: #e0e0e0;
+            padding: 10px;
+            color: #333;
+            font-weight: bold;
+            border-right: 1px solid #ccc;
+            position: sticky;
+            top: 0;
+            z-index: 1;
+        }
+
+        .clients-table td {
+            padding: 10px;
+            border-bottom: 1px solid #ccc;
+            border-right: 1px solid #ccc;
+            color: #333;
+            min-height: 40px;
+        }
+
+        .clients-table td input {
+            width: 100%;
+            border: none;
+            background: transparent;
+            padding: 5px;
+            font-size: 14px;
+        }
+
+        .clients-table td input:focus {
+            outline: 2px solid #4CAF50;
+            background: white;
+        }
+
+        .clients-table tr:nth-child(even) {
+            background: #f8f8f8;
+        }
+
+        /* Client details section */
+        .client-details {
+            flex: 1;
+            background: #f0f0f0;
+            border-radius: 10px;
+            padding: 0;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .client-details-header {
+            background: #d0d0d0;
+            padding: 15px;
+            text-align: center;
+            color: #333;
+            font-weight: bold;
+            font-size: 18px;
+            position: relative;
+        }
+
+        .client-details-content {
+            flex: 1;
+            overflow-y: auto;
+            max-height: 500px;
+        }
+
+        .client-info {
+            padding: 20px;
+            color: #333;
+        }
+
+        .client-info div {
+            margin-bottom: 10px;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .client-info input {
+            border: 1px solid #ddd;
+            padding: 5px 8px;
+            border-radius: 4px;
+            font-size: 14px;
+            flex: 1;
+        }
+
+        .client-info input:focus {
+            outline: 2px solid #4CAF50;
+            border-color: #4CAF50;
+        }
+
+        .number-grid {
+            display: grid;
+            grid-template-columns: repeat(10, 1fr);
+            gap: 2px;
+            padding: 20px;
+            background: #e8e8e8;
+            margin: 20px;
+            border-radius: 5px;
+        }
+
+        .number-cell {
+            aspect-ratio: 1;
+            background: white;
+            border: 1px solid #ccc;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            color: #333;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .number-cell:hover {
+            background: #4CAF50;
+            color: white;
+        }
+
+        /* Items section */
+        .items-section {
+            flex: 1;
+            background: #f0f0f0;
+            border-radius: 10px;
+            padding: 0;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .items-header {
+            background: #d0d0d0;
+            padding: 15px;
+            text-align: center;
+            color: #333;
+            font-weight: bold;
+            font-size: 18px;
+            position: relative;
+        }
+
+        .items-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .items-table th {
+            background: #e0e0e0;
+            padding: 10px;
+            color: #333;
+            font-weight: bold;
+            border-right: 1px solid #ccc;
+            position: sticky;
+            top: 0;
+            z-index: 1;
+        }
+
+        .items-table td {
+            padding: 10px;
+            border-bottom: 1px solid #ccc;
+            border-right: 1px solid #ccc;
+            color: #333;
+            min-height: 40px;
+        }
+
+        .items-table td input {
+            width: 100%;
+            border: none;
+            background: transparent;
+            padding: 5px;
+            font-size: 14px;
+        }
+
+        .items-table td input:focus {
+            outline: 2px solid #4CAF50;
+            background: white;
+        }
+
+        .items-table tr:nth-child(even) {
+            background: #f8f8f8;
+        }
+
+        /* Logo styles */
+        .logo {
+            position: absolute;
+            bottom: 20px;
+            height: 50px;
+            object-fit: contain;
+        }
+
+        .swadam-logo {
+            left: 20px;
+            max-width: 150px;
+        }
+
+        .smart-track-logo {
+            right: 20px;
+            max-width: 150px;
+        }
+
+        /* Fallback text for when images aren't loaded */
+        .logo-placeholder {
+            position: absolute;
+            bottom: 20px;
+            font-size: 24px;
+            font-weight: bold;
+            display: none;
+        }
+
+        .swadam-placeholder {
+            left: 20px;
+            color: #ff6b35;
+        }
+
+        .smart-track-placeholder {
+            right: 20px;
+            color: #4CAF50;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .content {
+                flex-direction: column;
+                height: auto;
+            }
+            
+            .sidebar {
+                width: 250px;
+                left: -250px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Hover trigger zone -->
+    <div class="sidebar-trigger"></div>
+    
+    <!-- Overlay -->
+    <div class="overlay"></div>
+    
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <div class="sidebar-item" onclick="navigateTo('homepage.html')">Home</div>
+        <div class="sidebar-item" onclick="navigateTo('inventory.html')">Inventory</div>
+        <div class="sidebar-item active">Client Records</div>
+        <div class="sidebar-item" onclick="navigateTo('progress check.html')">Progress Check</div>
+        <div class="sidebar-item" onclick="navigateTo('turnover.html')">Turnover Frame-rate</div>
+        <div class="sidebar-item" onclick="navigateTo('loyalty.html')">Loyalty Program</div>
+        <div class="sidebar-item" onclick="exitApp()">Exit App</div>
+    </div>
+
+    <!-- Main container -->
+    <div class="main-container">
+        <div class="content">
+            <!-- Clients section -->
+            <div class="clients-section">
+                <div class="clients-header">
+                    Clients
+                    <button class="edit-btn" onclick="toggleEdit('clients')">Edit</button>
+                </div>
+                <div class="table-container">
+                    <table class="clients-table">
+                        <thead>
+                            <tr>
+                                <th>Business name</th>
+                                <th>Orders</th>
+                            </tr>
+                        </thead>
+                        <tbody id="clients-tbody">
+                            <tr><td><input type="text" placeholder="Enter business name" disabled></td><td><input type="text" placeholder="Enter orders" disabled></td></tr>
+                            <tr><td><input type="text" placeholder="Enter business name" disabled></td><td><input type="text" placeholder="Enter orders" disabled></td></tr>
+                            <tr><td><input type="text" placeholder="Enter business name" disabled></td><td><input type="text" placeholder="Enter orders" disabled></td></tr>
+                            <tr><td><input type="text" placeholder="Enter business name" disabled></td><td><input type="text" placeholder="Enter orders" disabled></td></tr>
+                            <tr><td><input type="text" placeholder="Enter business name" disabled></td><td><input type="text" placeholder="Enter orders" disabled></td></tr>
+                            <tr><td><input type="text" placeholder="Enter business name" disabled></td><td><input type="text" placeholder="Enter orders" disabled></td></tr>
+                            <tr><td><input type="text" placeholder="Enter business name" disabled></td><td><input type="text" placeholder="Enter orders" disabled></td></tr>
+                            <tr><td><input type="text" placeholder="Enter business name" disabled></td><td><input type="text" placeholder="Enter orders" disabled></td></tr>
+                            <tr><td><input type="text" placeholder="Enter business name" disabled></td><td><input type="text" placeholder="Enter orders" disabled></td></tr>
+                            <tr><td><input type="text" placeholder="Enter business name" disabled></td><td><input type="text" placeholder="Enter orders" disabled></td></tr>
+                            <tr><td><input type="text" placeholder="Enter business name" disabled></td><td><input type="text" placeholder="Enter orders" disabled></td></tr>
+                            <tr><td><input type="text" placeholder="Enter business name" disabled></td><td><input type="text" placeholder="Enter orders" disabled></td></tr>
+                            <tr><td><input type="text" placeholder="Enter business name" disabled></td><td><input type="text" placeholder="Enter orders" disabled></td></tr>
+                            <tr><td><input type="text" placeholder="Enter business name" disabled></td><td><input type="text" placeholder="Enter orders" disabled></td></tr>
+                            <tr><td><input type="text" placeholder="Enter business name" disabled></td><td><input type="text" placeholder="Enter orders" disabled></td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Client details section -->
+            <div class="client-details">
+                <div class="client-details-header">
+                    Client details
+                    <button class="edit-btn" onclick="toggleEdit('details')">Edit</button>
+                </div>
+                <div class="client-details-content">
+                    <div class="client-info">
+                        <div>Business Name: <input type="text" placeholder="Enter business name" id="business-name" disabled></div>
+                        <div>Client Number: <input type="text" placeholder="Enter client number" id="client-number" disabled></div>
+                    </div>
+                    <div class="number-grid">
+                        <!-- Generate number grid 1-100 -->
+                        <script>
+                            for (let i = 1; i <= 100; i++) {
+                                document.write(`<div class="number-cell">${i}</div>`);
+                            }
+                        </script>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Items section -->
+            <div class="items-section">
+                <div class="items-header">
+                    Items in the order
+                    <button class="edit-btn" onclick="toggleEdit('items')">Edit</button>
+                </div>
+                <div class="table-container">
+                    <table class="items-table">
+                        <thead>
+                            <tr>
+                                <th>Item name</th>
+                                <th>Quantity</th>
+                            </tr>
+                        </thead>
+                        <tbody id="items-tbody">
+                            <tr><td><input type="text" placeholder="Enter item name" disabled></td><td><input type="text" placeholder="Enter quantity" disabled></td></tr>
+                            <tr><td><input type="text" placeholder="Enter item name" disabled></td><td><input type="text" placeholder="Enter quantity" disabled></td></tr>
+                            <tr><td><input type="text" placeholder="Enter item name" disabled></td><td><input type="text" placeholder="Enter quantity" disabled></td></tr>
+                            <tr><td><input type="text" placeholder="Enter item name" disabled></td><td><input type="text" placeholder="Enter quantity" disabled></td></tr>
+                            <tr><td><input type="text" placeholder="Enter item name" disabled></td><td><input type="text" placeholder="Enter quantity" disabled></td></tr>
+                            <tr><td><input type="text" placeholder="Enter item name" disabled></td><td><input type="text" placeholder="Enter quantity" disabled></td></tr>
+                            <tr><td><input type="text" placeholder="Enter item name" disabled></td><td><input type="text" placeholder="Enter quantity" disabled></td></tr>
+                            <tr><td><input type="text" placeholder="Enter item name" disabled></td><td><input type="text" placeholder="Enter quantity" disabled></td></tr>
+                            <tr><td><input type="text" placeholder="Enter item name" disabled></td><td><input type="text" placeholder="Enter quantity" disabled></td></tr>
+                            <tr><td><input type="text" placeholder="Enter item name" disabled></td><td><input type="text" placeholder="Enter quantity" disabled></td></tr>
+                            <tr><td><input type="text" placeholder="Enter item name" disabled></td><td><input type="text" placeholder="Enter quantity" disabled></td></tr>
+                            <tr><td><input type="text" placeholder="Enter item name" disabled></td><td><input type="text" placeholder="Enter quantity" disabled></td></tr>
+                            <tr><td><input type="text" placeholder="Enter item name" disabled></td><td><input type="text" placeholder="Enter quantity" disabled></td></tr>
+                            <tr><td><input type="text" placeholder="Enter item name" disabled></td><td><input type="text" placeholder="Enter quantity" disabled></td></tr>
+                            <tr><td><input type="text" placeholder="Enter item name" disabled></td><td><input type="text" placeholder="Enter quantity" disabled></td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Logos -->
+        <img src="swadam.png" alt="Swadam" class="logo swadam-logo" onerror="this.style.display='none'; document.querySelector('.swadam-placeholder').style.display='block'">
+        <img src="Smart Track.png" alt="Smart Track" class="logo smart-track-logo" onerror="this.style.display='none'; document.querySelector('.smart-track-placeholder').style.display='block'">
+        
+        <!-- Fallback text logos -->
+        <div class="logo-placeholder swadam-placeholder">Swadam</div>
+        <div class="logo-placeholder smart-track-placeholder">Smart Track</div>
+    </div>
+
+    <script>
+        // Navigation function
+        function navigateTo(page) {
+            window.location.href = page;
+        }
+
+        // Exit app function
+        function exitApp() {
+            if (confirm('Are you sure you want to exit the application?')) {
+                window.close();
+            }
+        }
+
+        // Handle hover trigger for sidebar
+        const hoverTrigger = document.querySelector('.sidebar-trigger');
+        const sidebar = document.querySelector('.sidebar');
+        const overlay = document.querySelector('.overlay');
+        const mainContainer = document.querySelector('.main-container');
+
+        let hoverTimeout;
+
+        hoverTrigger.addEventListener('mouseenter', function() {
+            clearTimeout(hoverTimeout);
+            sidebar.classList.add('open');
+            overlay.classList.add('active');
+        });
+
+        sidebar.addEventListener('mouseenter', function() {
+            clearTimeout(hoverTimeout);
+        });
+
+        sidebar.addEventListener('mouseleave', function() {
+            hoverTimeout = setTimeout(() => {
+                sidebar.classList.remove('open');
+                overlay.classList.remove('active');
+            }, 300);
+        });
+
+        hoverTrigger.addEventListener('mouseleave', function() {
+            hoverTimeout = setTimeout(() => {
+                if (!sidebar.matches(':hover')) {
+                    sidebar.classList.remove('open');
+                    overlay.classList.remove('active');
+                }
+            }, 100);
+        });
+
+        // Edit functionality
+        function toggleEdit(section) {
+            const editBtn = event.target;
+            const isEditing = editBtn.textContent === 'Save';
+            
+            if (section === 'clients') {
+                const inputs = document.querySelectorAll('#clients-tbody input');
+                inputs.forEach(input => {
+                    input.disabled = isEditing;
+                });
+            } else if (section === 'details') {
+                const businessName = document.getElementById('business-name');
+                const clientNumber = document.getElementById('client-number');
+                businessName.disabled = isEditing;
+                clientNumber.disabled = isEditing;
+            } else if (section === 'items') {
+                const inputs = document.querySelectorAll('#items-tbody input');
+                inputs.forEach(input => {
+                    input.disabled = isEditing;
+                });
+            }
+            
+            editBtn.textContent = isEditing ? 'Edit' : 'Save';
+            editBtn.style.background = isEditing ? '#4CAF50' : '#ff6b35';
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,469 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Business Dashboard</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #000;
+            overflow-x: hidden;
+            color: #333;
+        }
+
+        /* Hover trigger area */
+        .hover-trigger {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 20px;
+            height: 100vh;
+            z-index: 1002;
+            background-color: transparent;
+        }
+
+        /* Side Menu */
+        .side-menu {
+            position: fixed;
+            top: 0;
+            left: -250px;
+            width: 250px;
+            height: 100vh;
+            background: #f0f0f0;
+            transition: left 0.3s ease;
+            z-index: 1000;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .side-menu.open {
+            left: 0;
+        }
+
+        .menu-item {
+            padding: 25px 20px;
+            text-align: center;
+            color: white;
+            font-weight: 500;
+            font-size: 16px;
+            border-bottom: 1px solid #666;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            background-color: #888;
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .menu-item:hover {
+            background-color: #666;
+        }
+
+        .menu-item.active {
+            background-color: #888;
+            color: white;
+            font-weight: bold;
+            font-size: 18px;
+        }
+
+        /* Overlay */
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s, visibility 0.3s;
+            z-index: 999;
+        }
+
+        .overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        /* Main Content */
+        .main-content {
+            padding: 0;
+            background-color: #000;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .content-wrapper {
+            background-color: #fff;
+            margin: 0;
+            padding: 0;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .top-section {
+            display: flex;
+            height: 600px;
+        }
+
+        /* Clients Section */
+        .clients-section {
+            width: 240px;
+            background-color: #f0f0f0;
+            border: 3px solid #000;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .clients-header {
+            background-color: #ddd;
+            padding: 10px 15px;
+            font-size: 18px;
+            font-weight: bold;
+            text-align: center;
+            border-bottom: 2px solid #000;
+            color: #333;
+            flex-shrink: 0;
+            position: relative;
+        }
+
+        .edit-button {
+            position: absolute;
+            top: 8px;
+            right: 10px;
+            background-color: #666;
+            color: white;
+            border: none;
+            padding: 4px 8px;
+            font-size: 12px;
+            border-radius: 3px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .edit-button:hover {
+            background-color: #444;
+        }
+
+        .client-rows {
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto;
+            flex: 1;
+        }
+
+        .client-rows::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .client-rows::-webkit-scrollbar-track {
+            background: #f0f0f0;
+        }
+
+        .client-rows::-webkit-scrollbar-thumb {
+            background: #888;
+            border-radius: 4px;
+        }
+
+        .client-rows::-webkit-scrollbar-thumb:hover {
+            background: #555;
+        }
+
+        .client-row {
+            height: 45px;
+            border-bottom: 2px solid #000;
+            background-color: #f0f0f0;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            display: flex;
+            align-items: center;
+            padding-left: 15px;
+            color: #333;
+        }
+
+        .client-row:hover {
+            background-color: #e0e0e0;
+        }
+
+        .client-row.selected {
+            background-color: #ccc;
+        }
+
+        /* Right Content */
+        .right-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            padding: 20px;
+            gap: 20px;
+        }
+
+        .business-section {
+            display: flex;
+            gap: 20px;
+            height: 80px;
+        }
+
+        .business-name {
+            background-color: #999;
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: flex-start;
+            padding-left: 20px;
+            color: white;
+            font-size: 18px;
+            font-weight: normal;
+        }
+
+        .discount-section {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            width: 120px;
+        }
+
+        .discount-label {
+            font-size: 18px;
+            font-weight: bold;
+            color: #333;
+        }
+
+        .toggle-switch {
+            position: relative;
+            width: 50px;
+            height: 25px;
+            background-color: #ff4444;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .toggle-switch.active {
+            background-color: #4CAF50;
+        }
+
+        .toggle-slider {
+            position: absolute;
+            top: 2px;
+            left: 2px;
+            width: 21px;
+            height: 21px;
+            background-color: white;
+            border-radius: 50%;
+            transition: transform 0.3s ease;
+        }
+
+        .toggle-switch.active .toggle-slider {
+            transform: translateX(25px);
+        }
+
+        /* Analysis Section */
+        .analysis-section {
+            display: flex;
+            gap: 20px;
+            flex: 1;
+        }
+
+        .analysis-box, .profitability-box {
+            flex: 1;
+            background-color: #999;
+            color: white;
+            padding: 30px;
+            text-align: center;
+            font-size: 20px;
+            font-weight: normal;
+            display: flex;
+            align-items: flex-start;
+            justify-content: center;
+            padding-top: 30px;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .top-section {
+                flex-direction: column;
+                height: auto;
+            }
+            
+            .clients-section {
+                width: 100%;
+                height: 300px;
+            }
+            
+            .business-section {
+                flex-direction: column;
+                height: auto;
+            }
+            
+            .analysis-section {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Hover trigger area -->
+    <div class="hover-trigger"></div>
+    
+    <!-- Overlay -->
+    <div class="overlay"></div>
+
+    <!-- Side Menu -->
+    <div class="side-menu">
+        <div class="menu-item" onclick="navigateTo('homepage.html')">Home</div>
+        <div class="menu-item active">Inventory</div>
+        <div class="menu-item" onclick="navigateTo('client record.html')">Client Records</div>
+        <div class="menu-item" onclick="navigateTo('progress check.html')">Progress Check</div>
+        <div class="menu-item" onclick="navigateTo('turnover.html')">Turnover Frame-rate</div>
+        <div class="menu-item" onclick="navigateTo('loyalty.html')">Loyalty Program</div>
+        <div class="menu-item" onclick="exitApp()">Exit App</div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <div class="content-wrapper">
+            <div class="top-section">
+                <!-- Clients Section -->
+                <div class="clients-section">
+                    <div class="clients-header">
+                        Clients
+                        <button class="edit-button" onclick="editClients()">Edit</button>
+                    </div>
+                    <div class="client-rows">
+                        <div class="client-row" onclick="selectClient('ABC Corporation')">ABC Corporation</div>
+                        <div class="client-row" onclick="selectClient('Tech Solutions Ltd')">Tech Solutions Ltd</div>
+                        <div class="client-row" onclick="selectClient('Green Energy Co')">Green Energy Co</div>
+                        <div class="client-row" onclick="selectClient('Digital Marketing Inc')">Digital Marketing Inc</div>
+                        <div class="client-row" onclick="selectClient('Food Services LLC')">Food Services LLC</div>
+                        <div class="client-row" onclick="selectClient('Construction Group')">Construction Group</div>
+                        <div class="client-row" onclick="selectClient('Medical Center')">Medical Center</div>
+                        <div class="client-row" onclick="selectClient('Auto Repair Shop')">Auto Repair Shop</div>
+                        <div class="client-row" onclick="selectClient('Fashion Boutique')">Fashion Boutique</div>
+                        <div class="client-row" onclick="selectClient('Coffee House')">Coffee House</div>
+                        <div class="client-row" onclick="selectClient('Fitness Gym')">Fitness Gym</div>
+                        <div class="client-row" onclick="selectClient('Pet Store')">Pet Store</div>
+                        <div class="client-row" onclick="selectClient('Bookstore')">Bookstore</div>
+                        <div class="client-row" onclick="selectClient('Electronics Store')">Electronics Store</div>
+                        <div class="client-row" onclick="selectClient('Real Estate Agency')">Real Estate Agency</div>
+                        <div class="client-row" onclick="selectClient('Law Firm')">Law Firm</div>
+                        <div class="client-row" onclick="selectClient('Accounting Services')">Accounting Services</div>
+                        <div class="client-row" onclick="selectClient('Travel Agency')">Travel Agency</div>
+                        <div class="client-row" onclick="selectClient('Photography Studio')">Photography Studio</div>
+                        <div class="client-row" onclick="selectClient('Cleaning Services')">Cleaning Services</div>
+                    </div>
+                </div>
+
+                <!-- Right Content -->
+                <div class="right-content">
+                    <div class="business-section">
+                        <div class="business-name" id="businessNameDisplay">Business Name: <span id="selectedBusiness">Select a client</span></div>
+                        <div class="discount-section">
+                            <div class="discount-label">Discount</div>
+                            <div class="toggle-switch active" onclick="toggleDiscount()">
+                                <div class="toggle-slider"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Analysis Section -->
+                    <div class="analysis-section">
+                        <div class="analysis-box">Analysis</div>
+                        <div class="profitability-box">Profitability</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let discountActive = true;
+        let hoverTimeout;
+        let selectedClientRow = null;
+
+        // Navigation function
+        function navigateTo(page) {
+            window.location.href = page;
+        }
+
+        // Exit app function
+        function exitApp() {
+            if (confirm('Are you sure you want to exit the application?')) {
+                window.close();
+            }
+        }
+
+        function selectClient(businessName) {
+            // Update the business name display
+            document.getElementById('selectedBusiness').textContent = businessName;
+            
+            // Remove previous selection
+            if (selectedClientRow) {
+                selectedClientRow.classList.remove('selected');
+            }
+            
+            // Add selection to clicked row
+            selectedClientRow = event.target;
+            selectedClientRow.classList.add('selected');
+        }
+
+        // Handle hover trigger for sidebar
+        const hoverTrigger = document.querySelector('.hover-trigger');
+        const sidebar = document.querySelector('.side-menu');
+        const overlay = document.querySelector('.overlay');
+
+        hoverTrigger.addEventListener('mouseenter', function() {
+            clearTimeout(hoverTimeout);
+            sidebar.classList.add('open');
+            overlay.classList.add('active');
+        });
+
+        sidebar.addEventListener('mouseenter', function() {
+            clearTimeout(hoverTimeout);
+        });
+
+        sidebar.addEventListener('mouseleave', function() {
+            hoverTimeout = setTimeout(() => {
+                sidebar.classList.remove('open');
+                overlay.classList.remove('active');
+            }, 300);
+        });
+
+        hoverTrigger.addEventListener('mouseleave', function() {
+            hoverTimeout = setTimeout(() => {
+                if (!sidebar.matches(':hover')) {
+                    sidebar.classList.remove('open');
+                    overlay.classList.remove('active');
+                }
+            }, 100);
+        });
+
+        function toggleDiscount() {
+            const toggleSwitch = document.querySelector('.toggle-switch');
+            discountActive = !discountActive;
+            
+            if (discountActive) {
+                toggleSwitch.classList.add('active');
+            } else {
+                toggleSwitch.classList.remove('active');
+            }
+        }
+
+        function editClients() {
+            alert('Edit Clients functionality would be implemented here.');
+        }
+    </script>
+</body>
+</html>
