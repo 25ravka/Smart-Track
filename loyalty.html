@@ -49,16 +49,6 @@
             left: 0;
         }
 
-        .menu-header {
-            background-color: #ddd;
-            color: #333;
-            padding: 15px 20px;
-            text-align: center;
-            font-size: 20px;
-            font-weight: bold;
-            flex-shrink: 0;
-        }
-
         .menu-item {
             display: flex;
             align-items: center;
@@ -77,6 +67,17 @@
 
         .menu-item:hover {
             background-color: #777;
+        }
+
+        .menu-item.inventory {
+            background-color: #ddd;
+            color: #333;
+            font-weight: bold;
+            font-size: 18px;
+        }
+
+        .menu-item.inventory:hover {
+            background-color: #ccc;
         }
 
         .menu-item.exit {
@@ -178,6 +179,20 @@
             height: 45px;
             border-bottom: 2px solid #000;
             background-color: #f0f0f0;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            display: flex;
+            align-items: center;
+            padding-left: 15px;
+            color: #333;
+        }
+
+        .client-row:hover {
+            background-color: #e0e0e0;
+        }
+
+        .client-row.selected {
+            background-color: #ccc;
         }
 
         /* Right Content */
@@ -200,7 +215,8 @@
             flex: 1;
             display: flex;
             align-items: center;
-            justify-content: center;
+            justify-content: flex-start;
+            padding-left: 20px;
             color: white;
             font-size: 18px;
             font-weight: normal;
@@ -300,13 +316,13 @@
 
     <!-- Side Menu -->
     <div class="side-menu" id="sideMenu" onmouseenter="keepMenuOpen()" onmouseleave="hideMenuOnLeave()">
-        <div class="menu-header">Inventory</div>
-        <a href="#" class="menu-item">Home</a>
-        <a href="#" class="menu-item">Client<br>Records</a>
-        <a href="#" class="menu-item">Progress<br>Check</a>
-        <a href="#" class="menu-item">Turnover<br>Frame-rate</a>
-        <a href="#" class="menu-item">Loyalty<br>Program</a>
-        <a href="#" class="menu-item exit">Exit App</a>
+        <a href="#" class="menu-item inventory" onclick="handleMenuClick('Inventory')">Inventory</a>
+        <a href="#" class="menu-item" onclick="handleMenuClick('Home')">Home</a>
+        <a href="#" class="menu-item" onclick="handleMenuClick('Client Records')">Client<br>Records</a>
+        <a href="#" class="menu-item" onclick="handleMenuClick('Progress Check')">Progress<br>Check</a>
+        <a href="#" class="menu-item" onclick="handleMenuClick('Turnover Frame-rate')">Turnover<br>Frame-rate</a>
+        <a href="#" class="menu-item" onclick="handleMenuClick('Loyalty Program')">Loyalty<br>Program</a>
+        <a href="#" class="menu-item exit" onclick="handleMenuClick('Exit App')">Exit App</a>
     </div>
 
     <!-- Main Content -->
@@ -320,33 +336,33 @@
                         <button class="edit-button" onclick="editClients()">Edit</button>
                     </div>
                     <div class="client-rows">
-                        <div class="client-row"></div>
-                        <div class="client-row"></div>
-                        <div class="client-row"></div>
-                        <div class="client-row"></div>
-                        <div class="client-row"></div>
-                        <div class="client-row"></div>
-                        <div class="client-row"></div>
-                        <div class="client-row"></div>
-                        <div class="client-row"></div>
-                        <div class="client-row"></div>
-                        <div class="client-row"></div>
-                        <div class="client-row"></div>
-                        <div class="client-row"></div>
-                        <div class="client-row"></div>
-                        <div class="client-row"></div>
-                        <div class="client-row"></div>
-                        <div class="client-row"></div>
-                        <div class="client-row"></div>
-                        <div class="client-row"></div>
-                        <div class="client-row"></div>
+                        <div class="client-row" onclick="selectClient('ABC Corporation')">ABC Corporation</div>
+                        <div class="client-row" onclick="selectClient('Tech Solutions Ltd')">Tech Solutions Ltd</div>
+                        <div class="client-row" onclick="selectClient('Green Energy Co')">Green Energy Co</div>
+                        <div class="client-row" onclick="selectClient('Digital Marketing Inc')">Digital Marketing Inc</div>
+                        <div class="client-row" onclick="selectClient('Food Services LLC')">Food Services LLC</div>
+                        <div class="client-row" onclick="selectClient('Construction Group')">Construction Group</div>
+                        <div class="client-row" onclick="selectClient('Medical Center')">Medical Center</div>
+                        <div class="client-row" onclick="selectClient('Auto Repair Shop')">Auto Repair Shop</div>
+                        <div class="client-row" onclick="selectClient('Fashion Boutique')">Fashion Boutique</div>
+                        <div class="client-row" onclick="selectClient('Coffee House')">Coffee House</div>
+                        <div class="client-row" onclick="selectClient('Fitness Gym')">Fitness Gym</div>
+                        <div class="client-row" onclick="selectClient('Pet Store')">Pet Store</div>
+                        <div class="client-row" onclick="selectClient('Bookstore')">Bookstore</div>
+                        <div class="client-row" onclick="selectClient('Electronics Store')">Electronics Store</div>
+                        <div class="client-row" onclick="selectClient('Real Estate Agency')">Real Estate Agency</div>
+                        <div class="client-row" onclick="selectClient('Law Firm')">Law Firm</div>
+                        <div class="client-row" onclick="selectClient('Accounting Services')">Accounting Services</div>
+                        <div class="client-row" onclick="selectClient('Travel Agency')">Travel Agency</div>
+                        <div class="client-row" onclick="selectClient('Photography Studio')">Photography Studio</div>
+                        <div class="client-row" onclick="selectClient('Cleaning Services')">Cleaning Services</div>
                     </div>
                 </div>
 
                 <!-- Right Content -->
                 <div class="right-content">
                     <div class="business-section">
-                        <div class="business-name">Business Name</div>
+                        <div class="business-name" id="businessNameDisplay">Business Name: <span id="selectedBusiness">Select a client</span></div>
                         <div class="discount-section">
                             <div class="discount-label">Discount</div>
                             <div class="toggle-switch active" onclick="toggleDiscount()">
@@ -368,6 +384,21 @@
     <script>
         let discountActive = true;
         let hoverTimeout;
+        let selectedClientRow = null;
+
+        function selectClient(businessName) {
+            // Update the business name display
+            document.getElementById('selectedBusiness').textContent = businessName;
+            
+            // Remove previous selection
+            if (selectedClientRow) {
+                selectedClientRow.classList.remove('selected');
+            }
+            
+            // Add selection to clicked row
+            selectedClientRow = event.target;
+            selectedClientRow.classList.add('selected');
+        }
 
         function showMenuOnHover() {
             const sideMenu = document.getElementById('sideMenu');
@@ -408,19 +439,44 @@
             alert('Edit Clients functionality would be implemented here.');
         }
 
+        function handleMenuClick(menuItem) {
+            const sideMenu = document.getElementById('sideMenu');
+            
+            if (menuItem === 'Exit App') {
+                if (confirm('Are you sure you want to exit the application?')) {
+                    window.close();
+                }
+            } else if (menuItem === 'Home') {
+                // Reset to default view
+                document.getElementById('selectedBusiness').textContent = 'Select a client';
+                if (selectedClientRow) {
+                    selectedClientRow.classList.remove('selected');
+                    selectedClientRow = null;
+                }
+                sideMenu.classList.remove('hover-open');
+            } else if (menuItem === 'Inventory') {
+                alert('Inventory management system would open here.');
+                sideMenu.classList.remove('hover-open');
+            } else if (menuItem === 'Client Records') {
+                alert('Client records database would open here.');
+                sideMenu.classList.remove('hover-open');
+            } else if (menuItem === 'Progress Check') {
+                alert('Progress tracking system would open here.');
+                sideMenu.classList.remove('hover-open');
+            } else if (menuItem === 'Turnover Frame-rate') {
+                alert('Turnover and frame-rate analytics would open here.');
+                sideMenu.classList.remove('hover-open');
+            } else if (menuItem === 'Loyalty Program') {
+                alert('Loyalty program management would open here.');
+                sideMenu.classList.remove('hover-open');
+            }
+        }
+
         // Handle menu item clicks
         document.querySelectorAll('.menu-item').forEach(item => {
             item.addEventListener('click', function(e) {
-                if (this.textContent.includes('Exit App')) {
-                    e.preventDefault();
-                    if (confirm('Are you sure you want to exit the application?')) {
-                        window.close();
-                    }
-                } else {
-                    // Just hide the menu after clicking a menu item
-                    const sideMenu = document.getElementById('sideMenu');
-                    sideMenu.classList.remove('hover-open');
-                }
+                e.preventDefault();
+                // The onclick handlers will take care of the functionality
             });
         });
 
