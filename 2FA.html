@@ -287,7 +287,7 @@
     <div id="successForm" class="form-container">
       <div class="success-message">
         <h2 style="color: white; margin: 0;">Welcome to Smart Track!</h2>
-        <p style="margin: 10px 0 0 0;">Authentication successful. You are now logged in.</p>
+        <p style="margin: 10px 0 0 0;">Authentication successful. Redirecting to dashboard...</p>
       </div>
       
       <button onclick="showLogin()">Login Again</button>
@@ -324,6 +324,16 @@
     function showSuccess() {
       hideAllForms();
       document.getElementById('successForm').classList.add('active');
+      
+      // Redirect to dashboard after 2 seconds
+      setTimeout(() => {
+        redirectToDashboard();
+      }, 2000);
+    }
+
+    function redirectToDashboard() {
+      // Redirect to the dashboard page
+      window.location.href = 'Homepage.html';
     }
 
     function hideAllForms() {
