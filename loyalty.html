@@ -116,6 +116,8 @@
             width: 240px;
             background-color: #f0f0f0;
             border: 3px solid #000;
+            display: flex;
+            flex-direction: column;
         }
 
         .clients-header {
@@ -126,11 +128,31 @@
             text-align: center;
             border-bottom: 2px solid #000;
             color: #333;
+            flex-shrink: 0;
         }
 
         .client-rows {
             display: flex;
             flex-direction: column;
+            overflow-y: auto;
+            flex: 1;
+        }
+
+        .client-rows::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .client-rows::-webkit-scrollbar-track {
+            background: #f0f0f0;
+        }
+
+        .client-rows::-webkit-scrollbar-thumb {
+            background: #888;
+            border-radius: 4px;
+        }
+
+        .client-rows::-webkit-scrollbar-thumb:hover {
+            background: #555;
         }
 
         .client-row {
@@ -276,6 +298,14 @@
                 <div class="clients-section">
                     <div class="clients-header">Clients</div>
                     <div class="client-rows">
+                        <div class="client-row"></div>
+                        <div class="client-row"></div>
+                        <div class="client-row"></div>
+                        <div class="client-row"></div>
+                        <div class="client-row"></div>
+                        <div class="client-row"></div>
+                        <div class="client-row"></div>
+                        <div class="client-row"></div>
                         <div class="client-row"></div>
                         <div class="client-row"></div>
                         <div class="client-row"></div>
