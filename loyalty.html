@@ -36,57 +36,56 @@
             left: -250px;
             width: 250px;
             height: 100vh;
-            background: linear-gradient(180deg, #666 0%, #333 100%);
-            color: white;
+            background: linear-gradient(180deg, #e8b5b5 0%, #f5f5f5 10%, #f0f0f0 100%);
             transition: left 0.3s ease;
-            z-index: 1001;
-            overflow: hidden;
+            z-index: 1000;
             display: flex;
             flex-direction: column;
         }
 
-        .side-menu.hover-open {
+        .side-menu.open {
             left: 0;
         }
 
         .menu-item {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 0 20px;
-            color: white;
-            text-decoration: none;
+            padding: 25px 20px;
             text-align: center;
+            color: #444;
+            font-weight: 500;
             font-size: 16px;
-            background-color: #555;
-            margin: 1px 0;
-            transition: background-color 0.3s ease;
-            flex: 1;
-            min-height: 0;
+            border-bottom: 1px solid #ddd;
+            cursor: pointer;
+            transition: background-color 0.3s;
         }
 
         .menu-item:hover {
-            background-color: #777;
+            background-color: rgba(255, 255, 255, 0.3);
         }
 
-        .menu-item.inventory {
-            background-color: #ddd;
-            color: #333;
+        .menu-item.active {
+            background: linear-gradient(180deg, #d4a5a5 0%, #c49999 100%);
+            color: #8b4444;
             font-weight: bold;
             font-size: 18px;
         }
 
-        .menu-item.inventory:hover {
-            background-color: #ccc;
+        /* Overlay */
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s, visibility 0.3s;
+            z-index: 999;
         }
 
-        .menu-item.exit {
-            margin-top: 0;
-            background-color: #555;
-        }
-
-        .menu-item.exit:hover {
-            background-color: #777;
+        .overlay.active {
+            opacity: 1;
+            visibility: visible;
         }
 
         /* Main Content */
@@ -312,17 +311,20 @@
 </head>
 <body>
     <!-- Hover trigger area -->
-    <div class="hover-trigger" onmouseenter="showMenuOnHover()" onmouseleave="hideMenuOnHover()"></div>
+    <div class="hover-trigger"></div>
+    
+    <!-- Overlay -->
+    <div class="overlay"></div>
 
     <!-- Side Menu -->
-    <div class="side-menu" id="sideMenu" onmouseenter="keepMenuOpen()" onmouseleave="hideMenuOnLeave()">
-        <a href="#" class="menu-item inventory" onclick="handleMenuClick('Inventory')">Inventory</a>
-        <a href="#" class="menu-item" onclick="handleMenuClick('Home')">Home</a>
-        <a href="#" class="menu-item" onclick="handleMenuClick('Client Records')">Client<br>Records</a>
-        <a href="#" class="menu-item" onclick="handleMenuClick('Progress Check')">Progress<br>Check</a>
-        <a href="#" class="menu-item" onclick="handleMenuClick('Turnover Frame-rate')">Turnover<br>Frame-rate</a>
-        <a href="#" class="menu-item" onclick="handleMenuClick('Loyalty Program')">Loyalty<br>Program</a>
-        <a href="#" class="menu-item exit" onclick="handleMenuClick('Exit App')">Exit App</a>
+    <div class="side-menu">
+        <div class="menu-item" onclick="navigateTo('homepage.html')">Home</div>
+        <div class="menu-item active">Inventory</div>
+        <div class="menu-item" onclick="navigateTo('client record.html')">Client Records</div>
+        <div class="menu-item" onclick="navigateTo('progress check.html')">Progress Check</div>
+        <div class="menu-item" onclick="navigateTo('turnover.html')">Turnover Frame-rate</div>
+        <div class="menu-item" onclick="navigateTo('loyalty.html')">Loyalty Program</div>
+        <div class="menu-item" onclick="exitApp()">Exit App</div>
     </div>
 
     <!-- Main Content -->
@@ -386,6 +388,18 @@
         let hoverTimeout;
         let selectedClientRow = null;
 
+        // Navigation function
+        function navigateTo(page) {
+            window.location.href = page;
+        }
+
+        // Exit app function
+        function exitApp() {
+            if (confirm('Are you sure you want to exit the application?')) {
+                window.close();
+            }
+        }
+
         function selectClient(businessName) {
             // Update the business name display
             document.getElementById('selectedBusiness').textContent = businessName;
@@ -400,29 +414,36 @@
             selectedClientRow.classList.add('selected');
         }
 
-        function showMenuOnHover() {
-            const sideMenu = document.getElementById('sideMenu');
-            sideMenu.classList.add('hover-open');
+        // Handle hover trigger for sidebar
+        const hoverTrigger = document.querySelector('.hover-trigger');
+        const sidebar = document.querySelector('.side-menu');
+        const overlay = document.querySelector('.overlay');
+
+        hoverTrigger.addEventListener('mouseenter', function() {
             clearTimeout(hoverTimeout);
-        }
+            sidebar.classList.add('open');
+            overlay.classList.add('active');
+        });
 
-        function hideMenuOnHover() {
-            hoverTimeout = setTimeout(() => {
-                const sideMenu = document.getElementById('sideMenu');
-                sideMenu.classList.remove('hover-open');
-            }, 300);
-        }
-
-        function keepMenuOpen() {
+        sidebar.addEventListener('mouseenter', function() {
             clearTimeout(hoverTimeout);
-        }
+        });
 
-        function hideMenuOnLeave() {
+        sidebar.addEventListener('mouseleave', function() {
             hoverTimeout = setTimeout(() => {
-                const sideMenu = document.getElementById('sideMenu');
-                sideMenu.classList.remove('hover-open');
+                sidebar.classList.remove('open');
+                overlay.classList.remove('active');
             }, 300);
-        }
+        });
+
+        hoverTrigger.addEventListener('mouseleave', function() {
+            hoverTimeout = setTimeout(() => {
+                if (!sidebar.matches(':hover')) {
+                    sidebar.classList.remove('open');
+                    overlay.classList.remove('active');
+                }
+            }, 100);
+        });
 
         function toggleDiscount() {
             const toggleSwitch = document.querySelector('.toggle-switch');
@@ -438,55 +459,6 @@
         function editClients() {
             alert('Edit Clients functionality would be implemented here.');
         }
-
-        function handleMenuClick(menuItem) {
-            const sideMenu = document.getElementById('sideMenu');
-            
-            if (menuItem === 'Exit App') {
-                if (confirm('Are you sure you want to exit the application?')) {
-                    window.close();
-                }
-            } else if (menuItem === 'Home') {
-                // Reset to default view
-                document.getElementById('selectedBusiness').textContent = 'Select a client';
-                if (selectedClientRow) {
-                    selectedClientRow.classList.remove('selected');
-                    selectedClientRow = null;
-                }
-                sideMenu.classList.remove('hover-open');
-            } else if (menuItem === 'Inventory') {
-                alert('Inventory management system would open here.');
-                sideMenu.classList.remove('hover-open');
-            } else if (menuItem === 'Client Records') {
-                alert('Client records database would open here.');
-                sideMenu.classList.remove('hover-open');
-            } else if (menuItem === 'Progress Check') {
-                alert('Progress tracking system would open here.');
-                sideMenu.classList.remove('hover-open');
-            } else if (menuItem === 'Turnover Frame-rate') {
-                alert('Turnover and frame-rate analytics would open here.');
-                sideMenu.classList.remove('hover-open');
-            } else if (menuItem === 'Loyalty Program') {
-                alert('Loyalty program management would open here.');
-                sideMenu.classList.remove('hover-open');
-            }
-        }
-
-        // Handle menu item clicks
-        document.querySelectorAll('.menu-item').forEach(item => {
-            item.addEventListener('click', function(e) {
-                e.preventDefault();
-                // The onclick handlers will take care of the functionality
-            });
-        });
-
-        // Close menu on escape key
-        document.addEventListener('keydown', function(e) {
-            if (e.key === 'Escape') {
-                const sideMenu = document.getElementById('sideMenu');
-                sideMenu.classList.remove('hover-open');
-            }
-        });
     </script>
 </body>
 </html>
