@@ -72,6 +72,7 @@
             color: white;
             font-weight: bold;
             font-size: 18px;
+            cursor: pointer;
         }
 
         /* Overlay */
@@ -324,11 +325,10 @@
     <!-- Side Menu -->
     <div class="side-menu">
         <div class="menu-item" onclick="navigateTo('homepage.html')">Home</div>
-        <div class="menu-item active">Inventory</div>
+        <div class="menu-item" onclick="navigateTo('inventory.html')">Inventory</div>
         <div class="menu-item" onclick="navigateTo('client record.html')">Client Records</div>
         <div class="menu-item" onclick="navigateTo('progress check.html')">Progress Check</div>
-        <div class="menu-item" onclick="navigateTo('turnover.html')">Turnover Frame-rate</div>
-        <div class="menu-item" onclick="navigateTo('loyalty.html')">Loyalty Program</div>
+        <div class="menu-item active" onclick="navigateTo('loyalty.html')">Loyalty Program</div>
         <div class="menu-item" onclick="exitApp()">Exit App</div>
     </div>
 
