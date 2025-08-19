@@ -52,10 +52,6 @@
     }
 
     .hidden-sidebar-item {
-      flex: 1;
-      display: flex;
-      align-items: center;
-      justify-content: center;
       color: #333;
       font-size: 18px;
       font-weight: 600;
@@ -64,6 +60,7 @@
       border-bottom: 2px solid #888;
       text-align: center;
       padding: 20px;
+      text-decoration: none;
     }
 
     .hidden-sidebar-item:hover {
@@ -83,7 +80,7 @@
       flex-direction: column;
     }
 
-    .nav-item {
+    .nav-item, .hidden-sidebar-item {
       flex: 1;
       display: flex;
       align-items: center;
@@ -96,9 +93,10 @@
       border-bottom: 1px solid #444;
       cursor: pointer;
       transition: background 0.3s ease;
+      text-decoration: none;
     }
 
-    .nav-item:hover {
+    .nav-item:hover, .hidden-sidebar-item:hover {
       background: #888;
     }
 
@@ -178,23 +176,23 @@
     <!-- Hidden Sidebar (not visible on homepage) -->
     <div class="sidebar-trigger" id="sidebarTrigger"></div>
     <div class="hidden-sidebar" id="hiddenSidebar">
-      <div class="hidden-sidebar-item" onclick="navigateTo('homepage.html')">Home</div>
-      <div class="hidden-sidebar-item" onclick="navigateTo('inventory.html')">Inventory</div>
-      <div class="hidden-sidebar-item" onclick="navigateTo('client-records.html')">Client<br>Records</div>
-      <div class="hidden-sidebar-item" onclick="navigateTo('progress-check.html')">Progress<br>Check</div>
-      <div class="hidden-sidebar-item" onclick="navigateTo('turnover.html')">Turnover<br>Frame-rate</div>
-      <div class="hidden-sidebar-item" onclick="navigateTo('loyalty.html')">Loyalty<br>Program</div>
-      <div class="hidden-sidebar-item" onclick="exitApp()">Exit App</div>
+      <a href="Homepage.html" class="hidden-sidebar-item">Home</a>
+      <a href="inventory.html" class="hidden-sidebar-item">Inventory</a>
+      <a href="client record.html" class="hidden-sidebar-item">Client<br>Records</a>
+      <a href="progress check.html" class="hidden-sidebar-item">Progress<br>Check</a>
+      <a href="turnover.html" class="hidden-sidebar-item">Turnover<br>Frame-rate</a>
+      <a href="loyalty.html" class="hidden-sidebar-item">Loyalty<br>Program</a>
+      <a href="https://www.google.com" target="_blank" class="hidden-sidebar-item">Exit App</a>
     </div>
 
     <!-- Main Sidebar -->
     <div class="sidebar">
-      <div class="nav-item active" onclick="navigateTo('inventory.html')">Inventory</div>
-      <div class="nav-item" onclick="navigateTo('client record.html')">Client<br>Records</div>
-      <div class="nav-item" onclick="navigateTo('progress check.html')">Progress<br>Check</div>
-      <div class="nav-item" onclick="navigateTo('turnover.html')">Turnover<br>Frame-rate</div>
-      <div class="nav-item" onclick="navigateTo('loyalty.html')">Loyalty<br>Program</div>
-      <div class="nav-item" onclick="exitApp()">Exit App</div>
+      <a href="inventory.html" class="nav-item active">Inventory</a>
+      <a href="client record.html" class="nav-item">Client<br>Records</a>
+      <a href="progress check.html" class="nav-item">Progress<br>Check</a>
+      <a href="turnover.html" class="nav-item">Turnover<br>Frame-rate</a>
+      <a href="loyalty.html" class="nav-item">Loyalty<br>Program</a>
+      <a href="https://www.google.com" target="_blank" class="nav-item">Exit App</a>
     </div>
 
     <!-- Main Content -->
@@ -210,17 +208,5 @@
       </div>
     </div>
   </div>
-
-  <script>
-    function navigateTo(page) {
-      window.location.href = page;
-    }
-
-    function exitApp() {
-      if (confirm('Are you sure you want to exit the application?')) {
-        window.close();
-      }
-    }
-  </script>
 </body>
 </html>
