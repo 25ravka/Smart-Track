@@ -4,7 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Inventory - Smart Track</title>
+
     <style>
+        /* --------------------
+           GLOBAL STYLES
+        -------------------- */
         * {
             margin: 0;
             padding: 0;
@@ -25,64 +29,94 @@
             height: 100vh;
         }
 
-        /* Hidden Sidebar */
+        /* --------------------
+           SIDEBAR STYLES
+        -------------------- */
+
+        /* Invisible trigger area on the far left to open sidebar on hover */
         .sidebar-trigger {
             position: fixed;
             top: 0;
             left: 0;
             width: 20px;
             height: 100vh;
-            z-index: 1000;
+            z-index: 1001;
             background: transparent;
         }
 
+        /* Sidebar container */
         .sidebar {
             position: fixed;
             top: 0;
             left: -300px;
             width: 300px;
             height: 100vh;
-            background: linear-gradient(180deg, #d0d0d0 0%, #a0a0a0 100%);
-            z-index: 999;
-            transition: left 0.3s ease-in-out;
+            background: #888888;
+            transition: left 0.3s ease;
+            z-index: 1000;
             display: flex;
             flex-direction: column;
-            box-shadow: 2px 0 10px rgba(0, 0, 0, 0.3);
+            box-shadow: 2px 0 10px rgba(0,0,0,0.3);
+            overflow: hidden;
         }
 
-        .sidebar.show {
+        .sidebar.open {
             left: 0;
         }
 
+        /* Sidebar item buttons */
         .sidebar-item {
             flex: 1;
             display: flex;
             align-items: center;
             justify-content: center;
-            color: #333;
-            font-size: 18px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: background 0.3s ease;
-            border-bottom: 2px solid #888;
+            padding: 40px 20px;
             text-align: center;
-            padding: 20px;
+            color: white;
+            font-weight: 500;
+            font-size: 20px;
+            border-bottom: 2px solid #666;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            background: #888888;
         }
 
         .sidebar-item:hover {
-            background: rgba(255, 255, 255, 0.2);
+            background-color: #777777;
         }
 
         .sidebar-item.active {
-            background: rgba(196, 68, 68, 0.2);
-            color: #c44444;
+            background: #666666;
+            color: white;
+            font-weight: bold;
         }
 
         .sidebar-item:last-child {
-            border-bottom: none;
+            border-bottom: 2px solid #666;
         }
 
-        /* Top Navigation Bar */
+        /* Dim background when sidebar is open */
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s, visibility 0.3s;
+            z-index: 999;
+        }
+
+        .overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        /* --------------------
+           TOP NAVIGATION
+        -------------------- */
         .top-nav {
             background: #333333;
             padding: 15px 20px;
@@ -105,7 +139,9 @@
             width: auto;
         }
 
-        /* Main Content */
+        /* --------------------
+           MAIN CONTENT AREA
+        -------------------- */
         .main-content {
             flex: 1;
             display: flex;
@@ -113,7 +149,6 @@
             position: relative;
         }
 
-        /* Table Container */
         .table-container {
             flex: 1;
             overflow-y: auto;
@@ -184,7 +219,9 @@
             border-radius: 3px;
         }
 
-        /* Bottom Section */
+        /* --------------------
+           BOTTOM SECTION
+        -------------------- */
         .bottom-section {
             background: #333333;
             padding: 15px 20px;
@@ -215,74 +252,48 @@
             width: auto;
         }
 
-        /* Mobile Responsive */
+        /* --------------------
+           RESPONSIVE DESIGN
+        -------------------- */
         @media (max-width: 768px) {
-            .nav-sections {
-                flex-wrap: wrap;
-            }
-
-            .nav-section {
-                font-size: 12px;
-                padding: 6px 12px;
-            }
-
-            .smart-track-header {
-                font-size: 18px;
-            }
-
-            .table-container {
-                overflow-x: auto;
-            }
-
-            .inventory-table {
-                min-width: 600px;
-            }
-
-            .table-header th {
-                padding: 10px 15px;
-                font-size: 14px;
-            }
-
-            .inventory-table td {
-                padding: 8px 15px;
-                font-size: 12px;
-            }
-
-            .sidebar {
-                width: 250px;
-                left: -250px;
-            }
-
-            .sidebar-item {
-                font-size: 16px;
-            }
+            .smart-track-header { font-size: 18px; }
+            .table-container { overflow-x: auto; }
+            .inventory-table { min-width: 600px; }
+            .table-header th { padding: 10px 15px; font-size: 14px; }
+            .inventory-table td { padding: 8px 15px; font-size: 12px; }
+            .sidebar { width: 250px; left: -250px; }
+            .sidebar-item { font-size: 16px; }
         }
     </style>
 </head>
+
 <body>
     <div class="container">
-        <!-- Hidden Sidebar -->
-        <div class="sidebar-trigger" id="sidebarTrigger"></div>
-        <div class="sidebar" id="sidebar">
-            <div class="sidebar-item" data-page="homepage.html">Home</div>
-            <div class="sidebar-item active" data-page="inventory.html">Inventory</div>
-            <div class="sidebar-item" data-page="client record.html">Client<br>Records</div>
-            <div class="sidebar-item" data-page="progress check.html">Progress<br>Check</div>
-            <div class="sidebar-item" data-page="turnover.html">Turnover<br>Frame-rate</div>
-            <div class="sidebar-item" data-page="loyalty.html">Loyalty<br>Program</div>
-            <div class="sidebar-item" data-page="exit" onclick="exitApp()">Exit App</div>
+        <!-- Invisible sidebar hover trigger -->
+        <div class="sidebar-trigger"></div>
+
+        <!-- Dark overlay when sidebar is active -->
+        <div class="overlay"></div>
+
+        <!-- Sidebar Navigation -->
+        <div class="sidebar">
+            <div class="sidebar-item" onclick="navigateTo('homepage.html')">Home</div>
+            <div class="sidebar-item active">Inventory</div>
+            <div class="sidebar-item" onclick="navigateTo('client record.html')">Client Records</div>
+            <div class="sidebar-item" onclick="navigateTo('progress check.html')">Progress Check</div>
+            <div class="sidebar-item" onclick="navigateTo('loyalty.html')">Loyalty Program</div>
+            <div class="sidebar-item" onclick="exitApp()">Exit App</div>
         </div>
 
-        <!-- Top Navigation -->
+        <!-- Top navigation bar with logo -->
         <div class="top-nav">
             <div class="smart-track-header">
                 <img src="Smart Track.png" alt="Smart Track" class="smart-track-logo">
             </div>
         </div>
 
-        <!-- Main Content -->
+        <!-- Main content: Inventory Table -->
         <div class="main-content">
-            <!-- Table Container -->
             <div class="table-container">
                 <table class="inventory-table">
                     <thead class="table-header">
@@ -294,14 +305,12 @@
                             <th>Manufacture date</th>
                         </tr>
                     </thead>
-                    <tbody id="inventoryBody">
-                        <!-- Empty rows will be generated by JavaScript -->
-                    </tbody>
+                    <tbody id="inventoryBody"></tbody> <!-- JS will populate this -->
                 </table>
             </div>
         </div>
 
-        <!-- Bottom Section -->
+        <!-- Bottom section with edit/save button and logo -->
         <div class="bottom-section">
             <button class="edit-button" onclick="toggleEditMode()">Edit Inventory Items</button>
             <img src="Swadam.png" alt="Swadam" class="swadam-logo">
@@ -309,130 +318,147 @@
     </div>
 
     <script>
-        let editMode = false;
+        let editMode = false; // Toggle between edit and view mode
 
-        // Sidebar functionality
-        const sidebar = document.getElementById('sidebar');
-        const sidebarTrigger = document.getElementById('sidebarTrigger');
-        let sidebarTimeout;
-
-        // Show sidebar when mouse enters trigger area
-        sidebarTrigger.addEventListener('mouseenter', () => {
-            clearTimeout(sidebarTimeout);
-            sidebar.classList.add('show');
-        });
-
-        // Hide sidebar when mouse leaves both trigger and sidebar
-        function hideSidebar() {
-            sidebarTimeout = setTimeout(() => {
-                sidebar.classList.remove('show');
-            }, 300);
-        }
-
-        sidebarTrigger.addEventListener('mouseleave', hideSidebar);
-        sidebar.addEventListener('mouseleave', hideSidebar);
-
-        // Keep sidebar open when mouse is over it
-        sidebar.addEventListener('mouseenter', () => {
-            clearTimeout(sidebarTimeout);
-        });
-
-        // Navigation functionality
+        // Navigate to a new page
         function navigateTo(page) {
             window.location.href = page;
         }
 
-        // Sidebar item click handlers
-        document.querySelectorAll('.sidebar-item').forEach(item => {
-            item.addEventListener('click', function() {
-                if (this.dataset.page === 'exit') return;
-                
-                // Navigate to the page
-                if (this.dataset.page) {
-                    navigateTo(this.dataset.page);
-                }
-                
-                // Hide sidebar after selection
-                setTimeout(() => {
-                    sidebar.classList.remove('show');
-                }, 500);
-            });
+        // Simulate exiting app (opens Google)
+        function exitApp() {
+            window.open('https://www.google.com', '_blank');
+        }
+
+        // Sidebar hover behavior
+        const hoverTrigger = document.querySelector('.sidebar-trigger');
+        const sidebar = document.querySelector('.sidebar');
+        const overlay = document.querySelector('.overlay');
+        let hoverTimeout;
+
+        // Open sidebar on hover
+        hoverTrigger.addEventListener('mouseenter', () => {
+            clearTimeout(hoverTimeout);
+            sidebar.classList.add('open');
+            overlay.classList.add('active');
         });
 
-        // Exit app function
-        function exitApp() {
-            if (confirm('Are you sure you want to exit the application?')) {
-                window.close();
-            }
-        }
+        // Close sidebar on mouse leave
+        sidebar.addEventListener('mouseleave', () => {
+            hoverTimeout = setTimeout(() => {
+                sidebar.classList.remove('open');
+                overlay.classList.remove('active');
+            }, 300);
+        });
 
-        // Generate empty table rows (more rows for scrolling)
+        // Close sidebar if trigger is left and sidebar isn't hovered
+        hoverTrigger.addEventListener('mouseleave', () => {
+            hoverTimeout = setTimeout(() => {
+                if (!sidebar.matches(':hover')) {
+                    sidebar.classList.remove('open');
+                    overlay.classList.remove('active');
+                }
+            }, 100);
+        });
+
+        // Generate table rows with input fields
         function generateRows() {
             const tbody = document.getElementById('inventoryBody');
-            tbody.innerHTML = '';
-            
+            tbody.innerHTML = ''; // Clear previous rows
+
             for (let i = 0; i < 50; i++) {
                 const row = document.createElement('tr');
+
                 row.innerHTML = `
-                    <td><input type="text" placeholder="" ${editMode ? '' : 'readonly'}></td>
-                    <td><input type="number" placeholder="" ${editMode ? '' : 'readonly'}></td>
-                    <td><input type="text" placeholder="" ${editMode ? '' : 'readonly'}></td>
-                    <td><input type="date" placeholder="" ${editMode ? '' : 'readonly'}></td>
-                    <td><input type="date" placeholder="" ${editMode ? '' : 'readonly'}></td>
+                    <td><input type="text" ${editMode ? '' : 'readonly'}></td>
+                    <td><input type="number" min="0" step="1" ${editMode ? '' : 'readonly'}></td>
+                    <td>
+                        <div style="display:flex; align-items:center;">
+                            <span>$</span>
+                            <input type="number" min="0" step="0.01" style="flex:1; margin-left:4px;" ${editMode ? '' : 'readonly'}>
+                        </div>
+                    </td>
+                    <td><input type="date" ${editMode ? '' : 'readonly'}></td>
+                    <td><input type="date" ${editMode ? '' : 'readonly'}></td>
                 `;
+
                 tbody.appendChild(row);
             }
+
+            // If not editing, load previously saved data
+            if (!editMode) loadData();
         }
 
-        // Toggle edit mode
+        // Toggle between edit and save mode
         function toggleEditMode() {
             editMode = !editMode;
-            const button = document.querySelector('.edit-button');
-            
+            const btn = document.querySelector('.edit-button');
+
             if (editMode) {
-                button.textContent = 'Save Changes';
-                button.style.background = '#28a745';
+                btn.textContent = 'Save Changes';
+                btn.style.background = '#28a745';
             } else {
-                button.textContent = 'Edit Inventory Items';
-                button.style.background = '#c44444';
-                saveData();
+                btn.textContent = 'Edit Inventory Items';
+                btn.style.background = '#c44444';
+                saveData(); // Save data when toggling back to view
             }
-            
-            generateRows();
+
+            generateRows(); // Regenerate rows with new edit mode
         }
 
-        // Save data function
+        // Save inventory data to localStorage
         function saveData() {
-            const inputs = document.querySelectorAll('input');
+            const rows = document.querySelectorAll('#inventoryBody tr');
             const data = [];
-            
-            inputs.forEach(input => {
-                if (input.value.trim() !== '') {
-                    data.push({
-                        type: input.type,
-                        value: input.value
-                    });
+
+            rows.forEach((row, i) => {
+                const inputs = row.querySelectorAll('input');
+                const item = {
+                    rowIndex: i,
+                    name: inputs[0].value.trim(),
+                    quantity: inputs[1].value.trim(),
+                    price: inputs[2].value.trim(),
+                    expiry: inputs[3].value.trim(),
+                    manufactureDate: inputs[4].value.trim()
+                };
+
+                // Save only if at least one field is filled
+                if (item.name || item.quantity || item.price || item.expiry || item.manufactureDate) {
+                    data.push(item);
                 }
             });
-            
-            if (data.length > 0) {
-                console.log('Inventory data saved:', data);
-                // Here you would typically send data to a server
-                alert('Inventory data saved successfully!');
-            }
+
+            localStorage.setItem('inventoryData', JSON.stringify(data));
+            alert(`Saved ${data.length} items successfully!`);
         }
 
-        // Initialize table
+        // Load inventory data from localStorage
+        function loadData() {
+            const saved = localStorage.getItem('inventoryData');
+            if (!saved) return;
+
+            const data = JSON.parse(saved);
+            const rows = document.querySelectorAll('#inventoryBody tr');
+
+            data.forEach(item => {
+                if (item.rowIndex < rows.length) {
+                    const inputs = rows[item.rowIndex].querySelectorAll('input');
+                    inputs[0].value = item.name || '';
+                    inputs[1].value = item.quantity || '';
+                    inputs[2].value = item.price || '';
+                    inputs[3].value = item.expiry || '';
+                    inputs[4].value = item.manufactureDate || '';
+                }
+            });
+        }
+
+        // Initial row generation
         generateRows();
 
-        // Auto-save functionality when in edit mode
+        // Restrict input to numbers only for number fields
         document.addEventListener('input', function(e) {
-            if (editMode && e.target.tagName === 'INPUT') {
-                // Auto-save after 2 seconds of no typing
-                clearTimeout(window.autoSaveTimer);
-                window.autoSaveTimer = setTimeout(() => {
-                    console.log('Auto-saving...');
-                }, 2000);
+            if (e.target.type === 'number') {
+                e.target.value = e.target.value.replace(/[^0-9.]/g, '');
             }
         });
     </script>
