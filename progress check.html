@@ -36,7 +36,7 @@
             left: -300px;
             width: 300px;
             height: 100vh;
-            background: linear-gradient(180deg, #e8b5b5 0%, #f5f5f5 10%, #f0f0f0 100%);
+            background: #888888;
             transition: left 0.3s ease;
             z-index: 1000;
             display: flex;
@@ -49,25 +49,25 @@
         }
 
         .side-menu-item {
-            padding: 25px 20px;
+            padding: 40px 20px;
             text-align: center;
-            color: #444;
+            color: white;
             font-weight: 500;
-            font-size: 16px;
-            border-bottom: 1px solid #ddd;
+            font-size: 20px;
+            border-bottom: 2px solid #666;
             cursor: pointer;
             transition: background-color 0.3s;
+            background: #888888;
         }
 
         .side-menu-item:hover {
-            background-color: rgba(255, 255, 255, 0.3);
+            background-color: #777777;
         }
 
         .side-menu-item.active {
-            background: linear-gradient(180deg, #d4a5a5 0%, #c49999 100%);
-            color: #8b4444;
+            background: #666666;
+            color: white;
             font-weight: bold;
-            font-size: 18px;
         }
 
         /* Overlay */
@@ -152,6 +152,7 @@
             position: sticky;
             top: 0;
             z-index: 10;
+            position: relative;
         }
 
         .section-content {
@@ -187,7 +188,6 @@
             font-weight: bold;
             border-right: 3px solid #000;
             width: calc(66.67%);
-            position: relative;
         }
 
         .edit-btn {
@@ -332,6 +332,109 @@
             background: transparent;
             color: #333;
         }
+
+        /* Order notification styles */
+        .order-notification {
+            background: #fff;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            padding: 10px;
+            margin-bottom: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+
+        .business-name {
+            font-weight: bold;
+            color: #333;
+            flex: 1;
+        }
+
+        .order-time {
+            font-size: 12px;
+            color: #666;
+            margin: 0 10px;
+        }
+
+        .process-btn {
+            background: #2196F3;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 3px;
+            cursor: pointer;
+            font-size: 11px;
+        }
+
+        .process-btn:hover {
+            background: #1976D2;
+        }
+
+        /* Order item styles */
+        .order-item {
+            background: #fff;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            padding: 8px;
+            margin-bottom: 6px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+
+        .item-name {
+            font-weight: 500;
+            color: #333;
+            flex: 1;
+        }
+
+        .business-tag {
+            font-size: 10px;
+            background: #e0e0e0;
+            color: #666;
+            padding: 2px 6px;
+            border-radius: 10px;
+            margin: 0 8px;
+        }
+
+        .complete-btn {
+            background: #4CAF50;
+            color: white;
+            border: none;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .complete-btn:hover {
+            background: #45a049;
+        }
+
+        /* Completed item styles */
+        .completed-item {
+            background: #f8f8f8;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            padding: 8px;
+            margin-bottom: 6px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            opacity: 0.8;
+        }
+
+        .completed-time {
+            font-size: 10px;
+            color: #999;
+        }
     </style>
 </head>
 <body>
@@ -347,7 +450,6 @@
         <div class="side-menu-item" onclick="navigateTo('inventory.html')">Inventory</div>
         <div class="side-menu-item" onclick="navigateTo('client record.html')">Client Records</div>
         <div class="side-menu-item active">Progress Check</div>
-        <div class="side-menu-item" onclick="navigateTo('turnover.html')">Turnover Frame-rate</div>
         <div class="side-menu-item" onclick="navigateTo('loyalty.html')">Loyalty Program</div>
         <div class="side-menu-item" onclick="exitApp()">Exit App</div>
     </div>
@@ -355,31 +457,66 @@
     <div class="container">
         <div class="left-panel">
             <div class="notifications-section">
-                <div class="section-title">Notifications of New Orders</div>
-                <div class="section-content">
-                    <!-- Notifications content can be added here -->
+                <div class="section-title">
+                    Notifications of New Orders
+                </div>
+                <div class="section-content" id="notifications-content">
+                    <div class="order-notification">
+                        <div class="business-name">Restaurant ABC</div>
+                        <div class="order-time">2:30 PM</div>
+                        <button class="process-btn" onclick="processOrder(this, 'Restaurant ABC', ['Burger', 'Fries', 'Drink'])">Process</button>
+                    </div>
+                    <div class="order-notification">
+                        <div class="business-name">Pizza Palace</div>
+                        <div class="order-time">2:45 PM</div>
+                        <button class="process-btn" onclick="processOrder(this, 'Pizza Palace', ['Large Pizza', 'Garlic Bread'])">Process</button>
+                    </div>
                 </div>
             </div>
             <div class="pending-section">
-                <div class="section-title">Pending Orders</div>
-                <div class="section-content">
-                    <!-- Pending orders content can be added here -->
+                <div class="section-title">
+                    Pending Orders
+                </div>
+                <div class="section-content" id="pending-content">
+                    <div class="order-item" data-business="Cafe Deluxe">
+                        <span class="item-name">Cappuccino</span>
+                        <span class="business-tag">Cafe Deluxe</span>
+                        <button class="complete-btn" onclick="completeItem(this)">✓</button>
+                    </div>
+                    <div class="order-item" data-business="Sushi Express">
+                        <span class="item-name">California Roll</span>
+                        <span class="business-tag">Sushi Express</span>
+                        <button class="complete-btn" onclick="completeItem(this)">✓</button>
+                    </div>
+                    <div class="order-item" data-business="Sushi Express">
+                        <span class="item-name">Salmon Sashimi</span>
+                        <span class="business-tag">Sushi Express</span>
+                        <button class="complete-btn" onclick="completeItem(this)">✓</button>
+                    </div>
                 </div>
             </div>
             <div class="completed-section">
-                <div class="section-title">Completed Orders</div>
-                <div class="section-content">
-                    <!-- Completed orders content can be added here -->
+                <div class="section-title">
+                    Completed Orders
+                </div>
+                <div class="section-content" id="completed-content">
+                    <div class="completed-item">
+                        <span class="item-name">Club Sandwich</span>
+                        <span class="business-tag">Sandwich Shop</span>
+                        <span class="completed-time">1:15 PM</span>
+                    </div>
+                    <div class="completed-item">
+                        <span class="item-name">Latte</span>
+                        <span class="business-tag">Coffee Corner</span>
+                        <span class="completed-time">1:30 PM</span>
+                    </div>
                 </div>
             </div>
         </div>
 
         <div class="right-panel">
             <div class="header-row">
-                <div class="business-header">
-                    Business Names
-                    <button class="edit-btn" onclick="toggleEditBusinessNames()">Edit</button>
-                </div>
+                <div class="business-header">Business Names</div>
                 <div class="progress-header">Progress</div>
             </div>
             <div class="scrollable-content">
@@ -399,13 +536,73 @@
                     <div class="business-row"><input type="text" value="Smoothie Bar" disabled></div>
                     <div class="business-row"><input type="text" value="Wings & Things" disabled></div>
                     <div class="business-row"><input type="text" value="Healthy Bites" disabled></div>
-                    <div class="business-row"><input type="text" placeholder="Add new business..." disabled></div>
-                    <div class="business-row"><input type="text" placeholder="Add new business..." disabled></div>
-                    <div class="business-row"><input type="text" placeholder="Add new business..." disabled></div>
-                    <div class="business-row"><input type="text" placeholder="Add new business..." disabled></div>
-                    <div class="business-row"><input type="text" placeholder="Add new business..." disabled></div>
                 </div>
                 <div class="progress-column sync-scroll" id="progressColumn">
+                    <div class="progress-row">
+                        <div class="toggle-switch green" onclick="toggleSwitch(this)">
+                            <div class="toggle-slider"></div>
+                        </div>
+                    </div>
+                    <div class="progress-row">
+                        <div class="toggle-switch red" onclick="toggleSwitch(this)">
+                            <div class="toggle-slider"></div>
+                        </div>
+                    </div>
+                    <div class="progress-row">
+                        <div class="toggle-switch green" onclick="toggleSwitch(this)">
+                            <div class="toggle-slider"></div>
+                        </div>
+                    </div>
+                    <div class="progress-row">
+                        <div class="toggle-switch green" onclick="toggleSwitch(this)">
+                            <div class="toggle-slider"></div>
+                        </div>
+                    </div>
+                    <div class="progress-row">
+                        <div class="toggle-switch green" onclick="toggleSwitch(this)">
+                            <div class="toggle-slider"></div>
+                        </div>
+                    </div>
+                    <div class="progress-row">
+                        <div class="toggle-switch green" onclick="toggleSwitch(this)">
+                            <div class="toggle-slider"></div>
+                        </div>
+                    </div>
+                    <div class="progress-row">
+                        <div class="toggle-switch green" onclick="toggleSwitch(this)">
+                            <div class="toggle-slider"></div>
+                        </div>
+                    </div>
+                    <div class="progress-row">
+                        <div class="toggle-switch red" onclick="toggleSwitch(this)">
+                            <div class="toggle-slider"></div>
+                        </div>
+                    </div>
+                    <div class="progress-row">
+                        <div class="toggle-switch green" onclick="toggleSwitch(this)">
+                            <div class="toggle-slider"></div>
+                        </div>
+                    </div>
+                    <div class="progress-row">
+                        <div class="toggle-switch green" onclick="toggleSwitch(this)">
+                            <div class="toggle-slider"></div>
+                        </div>
+                    </div>
+                    <div class="progress-row">
+                        <div class="toggle-switch green" onclick="toggleSwitch(this)">
+                            <div class="toggle-slider"></div>
+                        </div>
+                    </div>
+                    <div class="progress-row">
+                        <div class="toggle-switch green" onclick="toggleSwitch(this)">
+                            <div class="toggle-slider"></div>
+                        </div>
+                    </div>
+                    <div class="progress-row">
+                        <div class="toggle-switch red" onclick="toggleSwitch(this)">
+                            <div class="toggle-slider"></div>
+                        </div>
+                    </div>
                     <div class="progress-row">
                         <div class="toggle-switch green" onclick="toggleSwitch(this)">
                             <div class="toggle-slider"></div>
@@ -494,23 +691,57 @@
 
         // Exit app function
         function exitApp() {
-            if (confirm('Are you sure you want to exit the application?')) {
-                window.close();
-            }
+                window.open('https://www.google.com', '_blank');
         }
 
-        // Edit business names functionality
-        function toggleEditBusinessNames() {
-            const editBtn = event.target;
-            const isEditing = editBtn.textContent === 'Save';
-            const inputs = document.querySelectorAll('.business-row input');
+        // Process order from notifications to pending
+        function processOrder(button, businessName, items) {
+            const notification = button.parentElement;
+            const pendingContent = document.getElementById('pending-content');
             
-            inputs.forEach(input => {
-                input.disabled = isEditing;
+            // Add each item to pending orders
+            items.forEach(item => {
+                const orderItem = document.createElement('div');
+                orderItem.className = 'order-item';
+                orderItem.setAttribute('data-business', businessName);
+                orderItem.innerHTML = `
+                    <span class="item-name">${item}</span>
+                    <span class="business-tag">${businessName}</span>
+                    <button class="complete-btn" onclick="completeItem(this)">✓</button>
+                `;
+                pendingContent.appendChild(orderItem);
             });
             
-            editBtn.textContent = isEditing ? 'Edit' : 'Save';
-            editBtn.style.background = isEditing ? '#4CAF50' : '#ff6b35';
+            // Remove the notification
+            notification.remove();
+        }
+
+        // Complete item from pending to completed
+        function completeItem(button) {
+            const orderItem = button.parentElement;
+            const itemName = orderItem.querySelector('.item-name').textContent;
+            const businessName = orderItem.querySelector('.business-tag').textContent;
+            const completedContent = document.getElementById('completed-content');
+            const currentTime = new Date().toLocaleTimeString('en-US', { 
+                hour: 'numeric', 
+                minute: '2-digit',
+                hour12: true 
+            });
+            
+            // Create completed item
+            const completedItem = document.createElement('div');
+            completedItem.className = 'completed-item';
+            completedItem.innerHTML = `
+                <span class="item-name">${itemName}</span>
+                <span class="business-tag">${businessName}</span>
+                <span class="completed-time">${currentTime}</span>
+            `;
+            
+            // Add to completed section (at the top)
+            completedContent.insertBefore(completedItem, completedContent.firstChild);
+            
+            // Remove from pending
+            orderItem.remove();
         }
 
         // Handle hover trigger for side menu
