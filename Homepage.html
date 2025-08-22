@@ -5,27 +5,30 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Smart Track Dashboard</title>
   <style>
+    /* Reset margins, padding, and set box-sizing for consistency */
     * {
       margin: 0;
       padding: 0;
       box-sizing: border-box;
     }
 
+    /* General body styling */
     body {
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
       background: #000;
       color: white;
       height: 100vh;
-      overflow: hidden;
+      overflow: hidden; /* Prevents scrollbars */
     }
 
+    /* Main flex container for sidebar + content */
     .container {
       display: flex;
       height: 100vh;
       width: 100vw;
     }
 
-    /* Hidden Sidebar for other pages */
+    /* Invisible trigger area for hidden sidebar (not used on homepage) */
     .sidebar-trigger {
       position: fixed;
       top: 0;
@@ -34,23 +37,25 @@
       height: 100vh;
       z-index: 1000;
       background: transparent;
-      display: none; /* Hidden on homepage */
+      display: none; /* Disabled on homepage */
     }
 
+    /* Hidden sidebar (for other pages, not homepage) */
     .hidden-sidebar {
       position: fixed;
       top: 0;
-      left: -300px;
+      left: -300px; /* Hidden by default */
       width: 300px;
       height: 100vh;
       background: linear-gradient(180deg, #d0d0d0 0%, #a0a0a0 100%);
       z-index: 999;
-      transition: left 0.3s ease-in-out;
-      display: none; /* Hidden on homepage */
+      transition: left 0.3s ease-in-out; /* Slide animation */
+      display: none; /* Disabled on homepage */
       flex-direction: column;
       box-shadow: 2px 0 10px rgba(0, 0, 0, 0.3);
     }
 
+    /* Items inside hidden sidebar */
     .hidden-sidebar-item {
       color: #333;
       font-size: 18px;
@@ -63,16 +68,18 @@
       text-decoration: none;
     }
 
+    /* Hover effect for hidden sidebar items */
     .hidden-sidebar-item:hover {
       background: rgba(255, 255, 255, 0.2);
     }
 
+    /* Active state for hidden sidebar items */
     .hidden-sidebar-item.active {
       background: rgba(196, 68, 68, 0.2);
       color: #c44444;
     }
 
-    /* Main Sidebar */
+    /* Left sidebar (always visible on homepage) */
     .sidebar {
       width: 25%;
       background: #3d3d3d;
@@ -80,6 +87,7 @@
       flex-direction: column;
     }
 
+    /* Shared styles for main nav and hidden sidebar items */
     .nav-item, .hidden-sidebar-item {
       flex: 1;
       display: flex;
@@ -96,16 +104,18 @@
       text-decoration: none;
     }
 
+    /* Hover effect for sidebar items */
     .nav-item:hover, .hidden-sidebar-item:hover {
       background: #888;
     }
 
+    /* Active page highlight */
     .nav-item.active {
       background: #bbb;
       font-weight: bold;
     }
 
-    /* Main Content */
+    /* Main content area */
     .main-content {
       flex: 1;
       background: #000;
@@ -115,6 +125,7 @@
       align-items: center;
     }
 
+    /* Header (top right logo) */
     .header {
       position: absolute;
       top: 20px;
@@ -124,27 +135,32 @@
       gap: 10px;
     }
 
+    /* Logo inside header */
     .header img {
       height: 50px;
     }
 
+    /* Header text (if needed) */
     .header span {
       font-size: 20px;
       font-weight: 600;
     }
 
+    /* Center logo styling */
     .center-logo img {
       max-width: 90%;
       max-height: 80%;
       object-fit: contain;
     }
 
-    /* Responsive adjustments */
+    /* Responsive design for smaller screens */
     @media (max-width: 768px) {
+      /* Stack sidebar on top */
       .container {
         flex-direction: column;
       }
 
+      /* Sidebar becomes horizontal nav bar */
       .sidebar {
         width: 100%;
         height: auto;
@@ -152,6 +168,7 @@
         overflow-x: auto;
       }
 
+      /* Nav items adjust to row layout */
       .nav-item {
         flex: 1;
         min-width: 120px;
@@ -160,10 +177,12 @@
         border-bottom: none;
       }
 
+      /* Adjust main content height */
       .main-content {
         height: calc(100vh - 60px);
       }
 
+      /* Smaller header positioning */
       .header {
         top: 10px;
         right: 10px;
@@ -173,36 +192,35 @@
 </head>
 <body>
   <div class="container">
-    <!-- Hidden Sidebar (not visible on homepage) -->
+    <!-- Hidden Sidebar (disabled on homepage, but available on other pages) -->
     <div class="sidebar-trigger" id="sidebarTrigger"></div>
     <div class="hidden-sidebar" id="hiddenSidebar">
       <a href="Homepage.html" class="hidden-sidebar-item">Home</a>
       <a href="inventory.html" class="hidden-sidebar-item">Inventory</a>
       <a href="client record.html" class="hidden-sidebar-item">Client<br>Records</a>
       <a href="progress check.html" class="hidden-sidebar-item">Progress<br>Check</a>
-      <a href="turnover.html" class="hidden-sidebar-item">Turnover<br>Frame-rate</a>
       <a href="loyalty.html" class="hidden-sidebar-item">Loyalty<br>Program</a>
       <a href="https://www.google.com" target="_blank" class="hidden-sidebar-item">Exit App</a>
     </div>
 
-    <!-- Main Sidebar -->
+    <!-- Main Sidebar (visible by default) -->
     <div class="sidebar">
+      <!-- Active item = highlighted (Inventory) -->
       <a href="inventory.html" class="nav-item active">Inventory</a>
       <a href="client record.html" class="nav-item">Client<br>Records</a>
       <a href="progress check.html" class="nav-item">Progress<br>Check</a>
-      <a href="turnover.html" class="nav-item">Turnover<br>Frame-rate</a>
       <a href="loyalty.html" class="nav-item">Loyalty<br>Program</a>
       <a href="https://www.google.com" target="_blank" class="nav-item">Exit App</a>
     </div>
 
-    <!-- Main Content -->
+    <!-- Main Content Area -->
     <div class="main-content">
       <!-- Top Right Logo -->
       <div class="header">
         <img src="Smart Track.png" alt="Smart Track"/>
       </div>
 
-      <!-- Center Logo -->
+      <!-- Center Logo (Swadam branding) -->
       <div class="center-logo">
         <img src="Swadam.png" alt="Swadam"/>
       </div>
