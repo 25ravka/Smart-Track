@@ -190,6 +190,7 @@
             align-items: center;
             padding-left: 15px;
             color: #333;
+            position: relative;
         }
 
         .client-row:hover {
@@ -198,6 +199,32 @@
 
         .client-row.selected {
             background-color: #ccc;
+        }
+
+        .order-count {
+            position: absolute;
+            right: 10px;
+            background-color: #2196F3;
+            color: white;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            font-size: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+        }
+
+        .discount-eligible {
+            background-color: #4CAF50 !important;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { box-shadow: 0 0 0 0 rgba(76, 175, 80, 0.7); }
+            70% { box-shadow: 0 0 0 5px rgba(76, 175, 80, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(76, 175, 80, 0); }
         }
 
         /* Right Content */
@@ -282,14 +309,45 @@
             flex: 1;
             background-color: #999;
             color: white;
-            padding: 30px;
-            text-align: center;
-            font-size: 20px;
+            padding: 20px;
+            text-align: left;
+            font-size: 14px;
             font-weight: normal;
             display: flex;
+            flex-direction: column;
             align-items: flex-start;
-            justify-content: center;
-            padding-top: 30px;
+            justify-content: flex-start;
+        }
+
+        .analysis-title, .profitability-title {
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 15px;
+            text-align: center;
+            width: 100%;
+        }
+
+        .analysis-content, .profitability-content {
+            line-height: 1.5;
+        }
+
+        .metric {
+            margin-bottom: 10px;
+        }
+
+        .positive {
+            color: #128616;
+            font-weight: bold;
+        }
+
+        .negative {
+            color: #ec0606;
+            font-weight: bold;
+        }
+
+        .next-discount {
+            color: #FFD700;
+            font-weight: bold;
         }
 
         /* Responsive */
@@ -342,37 +400,97 @@
                         Clients
                         <button class="edit-button" onclick="editClients()">Edit</button>
                     </div>
-                    <div class="client-rows">
-                        <div class="client-row" onclick="selectClient('ABC Corporation')">ABC Corporation</div>
-                        <div class="client-row" onclick="selectClient('Tech Solutions Ltd')">Tech Solutions Ltd</div>
-                        <div class="client-row" onclick="selectClient('Green Energy Co')">Green Energy Co</div>
-                        <div class="client-row" onclick="selectClient('Digital Marketing Inc')">Digital Marketing Inc</div>
-                        <div class="client-row" onclick="selectClient('Food Services LLC')">Food Services LLC</div>
-                        <div class="client-row" onclick="selectClient('Construction Group')">Construction Group</div>
-                        <div class="client-row" onclick="selectClient('Medical Center')">Medical Center</div>
-                        <div class="client-row" onclick="selectClient('Auto Repair Shop')">Auto Repair Shop</div>
-                        <div class="client-row" onclick="selectClient('Fashion Boutique')">Fashion Boutique</div>
-                        <div class="client-row" onclick="selectClient('Coffee House')">Coffee House</div>
-                        <div class="client-row" onclick="selectClient('Fitness Gym')">Fitness Gym</div>
-                        <div class="client-row" onclick="selectClient('Pet Store')">Pet Store</div>
-                        <div class="client-row" onclick="selectClient('Bookstore')">Bookstore</div>
-                        <div class="client-row" onclick="selectClient('Electronics Store')">Electronics Store</div>
-                        <div class="client-row" onclick="selectClient('Real Estate Agency')">Real Estate Agency</div>
-                        <div class="client-row" onclick="selectClient('Law Firm')">Law Firm</div>
-                        <div class="client-row" onclick="selectClient('Accounting Services')">Accounting Services</div>
-                        <div class="client-row" onclick="selectClient('Travel Agency')">Travel Agency</div>
-                        <div class="client-row" onclick="selectClient('Photography Studio')">Photography Studio</div>
-                        <div class="client-row" onclick="selectClient('Cleaning Services')">Cleaning Services</div>
+                    <div class="client-rows" id="clientRows">
+                        <div class="client-row" onclick="selectClient('ABC Corporation')">
+                            ABC Corporation
+                            <div class="order-count">7</div>
+                        </div>
+                        <div class="client-row" onclick="selectClient('Tech Solutions Ltd')">
+                            Tech Solutions Ltd
+                            <div class="order-count">3</div>
+                        </div>
+                        <div class="client-row discount-eligible" onclick="selectClient('Green Energy Co')">
+                            Green Energy Co
+                            <div class="order-count discount-eligible">5</div>
+                        </div>
+                        <div class="client-row" onclick="selectClient('Digital Marketing Inc')">
+                            Digital Marketing Inc
+                            <div class="order-count">12</div>
+                        </div>
+                        <div class="client-row discount-eligible" onclick="selectClient('Food Services LLC')">
+                            Food Services LLC
+                            <div class="order-count discount-eligible">10</div>
+                        </div>
+                        <div class="client-row" onclick="selectClient('Construction Group')">
+                            Construction Group
+                            <div class="order-count">1</div>
+                        </div>
+                        <div class="client-row" onclick="selectClient('Medical Center')">
+                            Medical Center
+                            <div class="order-count">8</div>
+                        </div>
+                        <div class="client-row" onclick="selectClient('Auto Repair Shop')">
+                            Auto Repair Shop
+                            <div class="order-count">4</div>
+                        </div>
+                        <div class="client-row" onclick="selectClient('Fashion Boutique')">
+                            Fashion Boutique
+                            <div class="order-count">6</div>
+                        </div>
+                        <div class="client-row discount-eligible" onclick="selectClient('Coffee House')">
+                            Coffee House
+                            <div class="order-count discount-eligible">15</div>
+                        </div>
+                        <div class="client-row" onclick="selectClient('Fitness Gym')">
+                            Fitness Gym
+                            <div class="order-count">2</div>
+                        </div>
+                        <div class="client-row" onclick="selectClient('Pet Store')">
+                            Pet Store
+                            <div class="order-count">9</div>
+                        </div>
+                        <div class="client-row" onclick="selectClient('Bookstore')">
+                            Bookstore
+                            <div class="order-count">11</div>
+                        </div>
+                        <div class="client-row" onclick="selectClient('Electronics Store')">
+                            Electronics Store
+                            <div class="order-count">13</div>
+                        </div>
+                        <div class="client-row discount-eligible" onclick="selectClient('Real Estate Agency')">
+                            Real Estate Agency
+                            <div class="order-count discount-eligible">20</div>
+                        </div>
+                        <div class="client-row" onclick="selectClient('Law Firm')">
+                            Law Firm
+                            <div class="order-count">16</div>
+                        </div>
+                        <div class="client-row" onclick="selectClient('Accounting Services')">
+                            Accounting Services
+                            <div class="order-count">18</div>
+                        </div>
+                        <div class="client-row" onclick="selectClient('Travel Agency')">
+                            Travel Agency
+                            <div class="order-count">14</div>
+                        </div>
+                        <div class="client-row" onclick="selectClient('Photography Studio')">
+                            Photography Studio
+                            <div class="order-count">17</div>
+                        </div>
+                        <div class="client-row" onclick="selectClient('Cleaning Services')">
+                            Cleaning Services
+                            <div class="order-count">19</div>
+                        </div>
                     </div>
                 </div>
 
                 <!-- Right Content -->
                 <div class="right-content">
                     <div class="business-section">
-                        <div class="business-name" id="businessNameDisplay">Business Name: <span id="selectedBusiness">Select a client</span></div>
+                        <div class="business-name" id="businessNameDisplay">Business Name: &nbsp;<span id="selectedBusiness">Select a client</span></div>
                         <div class="discount-section">
                             <div class="discount-label">Discount</div>
-                            <div class="toggle-switch active" onclick="toggleDiscount()">
+                            <div class="toggle-switch" id="discountToggle">
                                 <div class="toggle-slider"></div>
                             </div>
                         </div>
@@ -380,8 +498,18 @@
 
                     <!-- Analysis Section -->
                     <div class="analysis-section">
-                        <div class="analysis-box">Analysis</div>
-                        <div class="profitability-box">Profitability</div>
+                        <div class="analysis-box">
+                            <div class="analysis-title">Loyalty Program Analysis</div>
+                            <div class="analysis-content" id="analysisContent">
+                                Select a client to view their loyalty program analysis
+                            </div>
+                        </div>
+                        <div class="profitability-box">
+                            <div class="profitability-title">Order Count & Discounts</div>
+                            <div class="profitability-content" id="profitabilityContent">
+                                Select a client to view order count and discount eligibility
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -389,9 +517,42 @@
     </div>
 
     <script>
-        let discountActive = true;
         let hoverTimeout;
         let selectedClientRow = null;
+
+        // Order count data for each business
+        const orderCounts = {
+            'ABC Corporation': 7,
+            'Tech Solutions Ltd': 3,
+            'Green Energy Co': 5,
+            'Digital Marketing Inc': 12,
+            'Food Services LLC': 10,
+            'Construction Group': 1,
+            'Medical Center': 8,
+            'Auto Repair Shop': 4,
+            'Fashion Boutique': 6,
+            'Coffee House': 15,
+            'Fitness Gym': 2,
+            'Pet Store': 9,
+            'Bookstore': 11,
+            'Electronics Store': 13,
+            'Real Estate Agency': 20,
+            'Law Firm': 16,
+            'Accounting Services': 18,
+            'Travel Agency': 14,
+            'Photography Studio': 17,
+            'Cleaning Services': 19
+        };
+
+        // Check if business is eligible for discount (multiples of 5)
+        function isEligibleForDiscount(orderCount) {
+            return orderCount > 0 && orderCount % 5 === 0;
+        }
+
+        // Calculate next discount milestone
+        function getNextDiscount(orderCount) {
+            return Math.ceil(orderCount / 5) * 5;
+        }
 
         // Navigation function
         function navigateTo(page) {
@@ -400,9 +561,7 @@
 
         // Exit app function
         function exitApp() {
-            if (confirm('Are you sure you want to exit the application?')) {
-                window.close();
-            }
+            window.open('https://www.google.com', '_blank');
         }
 
         function selectClient(businessName) {
@@ -415,8 +574,60 @@
             }
             
             // Add selection to clicked row
-            selectedClientRow = event.target;
+            selectedClientRow = event.target.closest('.client-row');
             selectedClientRow.classList.add('selected');
+
+            const orderCount = orderCounts[businessName] || 0;
+            const isEligible = isEligibleForDiscount(orderCount);
+            const nextDiscount = getNextDiscount(orderCount);
+            const ordersUntilDiscount = nextDiscount - orderCount;
+
+            // Update discount toggle based on eligibility
+            const discountToggle = document.getElementById('discountToggle');
+            if (isEligible) {
+                discountToggle.classList.add('active');
+            } else {
+                discountToggle.classList.remove('active');
+            }
+
+            // Update analysis section
+            const analysisContent = document.getElementById('analysisContent');
+            analysisContent.innerHTML = `
+                <div class="metric">Current Orders: <span class="positive">${orderCount}</span></div>
+                <div class="metric">Discount Status: <span class="${isEligible ? 'positive' : 'negative'}">${isEligible ? 'ELIGIBLE' : 'Not Eligible'}</span></div>
+                <div class="metric">Program: 10% discount every 5th order</div>
+                <div class="metric">Last Discount: ${orderCount >= 5 ? `Order #${Math.floor(orderCount / 5) * 5}` : 'None yet'}</div>
+                <div class="metric">Total Discounts Earned: <span class="positive">${Math.floor(orderCount / 5)}</span></div>
+                <div class="metric">Customer Loyalty Level: <span class="${orderCount >= 15 ? 'positive' : orderCount >= 10 ? 'next-discount' : 'negative'}">${orderCount >= 20 ? 'VIP' : orderCount >= 15 ? 'Gold' : orderCount >= 10 ? 'Silver' : orderCount >= 5 ? 'Bronze' : 'New'}</span></div>
+                <div class="metric">Average Orders/Month: ${Math.max(1, Math.floor(orderCount / 3))}</div>
+                <div class="metric">Estimated Annual Orders: ${orderCount * 4}</div>
+            `;
+
+            // Update order count and discount section
+            const profitabilityContent = document.getElementById('profitabilityContent');
+            if (isEligible) {
+                profitabilityContent.innerHTML = `
+                    <div class="metric">🎉 <span class="positive">DISCOUNT AVAILABLE!</span></div>
+                    <div class="metric">Current Order Count: <span class="positive">${orderCount}</span></div>
+                    <div class="metric">Discount: <span class="positive">10% OFF next order</span></div>
+                    <div class="metric">Milestone Reached: <span class="positive">Order #${orderCount}</span></div>
+                    <div class="metric">Next Discount at: Order #${nextDiscount + 5}</div>
+                    <div class="metric">Orders until next: <span class="next-discount">${5} more orders</span></div>
+                    <div class="metric">Total Saved: ~$${(Math.floor(orderCount / 5) * 50).toLocaleString()}</div>
+                    <div class="metric">Loyalty Score: <span class="positive">${Math.min(100, orderCount * 4)}%</span></div>
+                `;
+            } else {
+                profitabilityContent.innerHTML = `
+                    <div class="metric">Current Order Count: <span class="next-discount">${orderCount}</span></div>
+                    <div class="metric">Next Discount at: Order #<span class="positive">${nextDiscount}</span></div>
+                    <div class="metric">Orders until discount: <span class="next-discount">${ordersUntilDiscount} more orders</span></div>
+                    <div class="metric">Progress: <span class="positive">${Math.floor((orderCount % 5) * 20)}%</span> to next discount</div>
+                    <div class="metric">Discounts Earned: <span class="positive">${Math.floor(orderCount / 5)}</span></div>
+                    <div class="metric">Potential Annual Savings: $${(Math.floor(orderCount * 4 / 5) * 50).toLocaleString()}</div>
+                    <div class="metric">Loyalty Score: <span class="${orderCount >= 10 ? 'positive' : 'next-discount'}">${Math.min(100, orderCount * 4)}%</span></div>
+                    <div class="metric">Keep ordering to unlock discounts!</div>
+                `;
+            }
         }
 
         // Handle hover trigger for sidebar
@@ -450,20 +661,15 @@
             }, 100);
         });
 
-        function toggleDiscount() {
-            const toggleSwitch = document.querySelector('.toggle-switch');
-            discountActive = !discountActive;
-            
-            if (discountActive) {
-                toggleSwitch.classList.add('active');
-            } else {
-                toggleSwitch.classList.remove('active');
-            }
-        }
-
         function editClients() {
             alert('Edit Clients functionality would be implemented here.');
         }
+
+        // Initialize display
+        document.addEventListener('DOMContentLoaded', function() {
+            // Optional: Auto-select first eligible client for demonstration
+            // selectClient('Green Energy Co');
+        });
     </script>
 </body>
 </html>
