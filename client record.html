@@ -35,11 +35,12 @@
             left: -300px;
             width: 300px;
             height: 100vh;
-            background: linear-gradient(180deg, #e8b5b5 0%, #f5f5f5 10%, #f0f0f0 100%);
+            background: #888888;
             transition: left 0.3s ease;
             z-index: 1000;
             display: flex;
             flex-direction: column;
+            box-shadow: 2px 0 10px rgba(0,0,0,0.3);
         }
 
         .sidebar.open {
@@ -47,25 +48,25 @@
         }
 
         .sidebar-item {
-            padding: 25px 20px;
+            padding: 40px 20px;
             text-align: center;
-            color: #444;
+            color: white;
             font-weight: 500;
-            font-size: 16px;
-            border-bottom: 1px solid #ddd;
+            font-size: 20px;
+            border-bottom: 2px solid #666;
             cursor: pointer;
             transition: background-color 0.3s;
+            background: #888888;
         }
 
         .sidebar-item:hover {
-            background-color: rgba(255, 255, 255, 0.3);
+            background-color: #777777;
         }
 
         .sidebar-item.active {
-            background: linear-gradient(180deg, #d4a5a5 0%, #c49999 100%);
-            color: #8b4444;
+            background: #666666;
+            color: white;
             font-weight: bold;
-            font-size: 18px;
         }
 
         /* Overlay */
@@ -170,6 +171,7 @@
             border-right: 1px solid #ccc;
             color: #333;
             min-height: 40px;
+            cursor: pointer;
         }
 
         .clients-table td input {
@@ -187,6 +189,19 @@
 
         .clients-table tr:nth-child(even) {
             background: #f8f8f8;
+        }
+
+        .clients-table tr:hover {
+            background: #e0e0e0;
+        }
+
+        .clients-table tr.selected {
+            background: #4CAF50;
+            color: white;
+        }
+
+        .clients-table tr.selected td {
+            color: white;
         }
 
         /* Client details section */
@@ -267,6 +282,11 @@
 
         .number-cell:hover {
             background: #4CAF50;
+            color: white;
+        }
+
+        .number-cell.selected {
+            background: #4CAF50 !important;
             color: white;
         }
 
@@ -396,7 +416,6 @@
         <div class="sidebar-item" onclick="navigateTo('inventory.html')">Inventory</div>
         <div class="sidebar-item active">Client Records</div>
         <div class="sidebar-item" onclick="navigateTo('progress check.html')">Progress Check</div>
-        <div class="sidebar-item" onclick="navigateTo('turnover.html')">Turnover Frame-rate</div>
         <div class="sidebar-item" onclick="navigateTo('loyalty.html')">Loyalty Program</div>
         <div class="sidebar-item" onclick="exitApp()">Exit App</div>
     </div>
@@ -408,7 +427,6 @@
             <div class="clients-section">
                 <div class="clients-header">
                     Clients
-                    <button class="edit-btn" onclick="toggleEdit('clients')">Edit</button>
                 </div>
                 <div class="table-container">
                     <table class="clients-table">
@@ -419,21 +437,7 @@
                             </tr>
                         </thead>
                         <tbody id="clients-tbody">
-                            <tr><td><input type="text" placeholder="Enter business name" disabled></td><td><input type="text" placeholder="Enter orders" disabled></td></tr>
-                            <tr><td><input type="text" placeholder="Enter business name" disabled></td><td><input type="text" placeholder="Enter orders" disabled></td></tr>
-                            <tr><td><input type="text" placeholder="Enter business name" disabled></td><td><input type="text" placeholder="Enter orders" disabled></td></tr>
-                            <tr><td><input type="text" placeholder="Enter business name" disabled></td><td><input type="text" placeholder="Enter orders" disabled></td></tr>
-                            <tr><td><input type="text" placeholder="Enter business name" disabled></td><td><input type="text" placeholder="Enter orders" disabled></td></tr>
-                            <tr><td><input type="text" placeholder="Enter business name" disabled></td><td><input type="text" placeholder="Enter orders" disabled></td></tr>
-                            <tr><td><input type="text" placeholder="Enter business name" disabled></td><td><input type="text" placeholder="Enter orders" disabled></td></tr>
-                            <tr><td><input type="text" placeholder="Enter business name" disabled></td><td><input type="text" placeholder="Enter orders" disabled></td></tr>
-                            <tr><td><input type="text" placeholder="Enter business name" disabled></td><td><input type="text" placeholder="Enter orders" disabled></td></tr>
-                            <tr><td><input type="text" placeholder="Enter business name" disabled></td><td><input type="text" placeholder="Enter orders" disabled></td></tr>
-                            <tr><td><input type="text" placeholder="Enter business name" disabled></td><td><input type="text" placeholder="Enter orders" disabled></td></tr>
-                            <tr><td><input type="text" placeholder="Enter business name" disabled></td><td><input type="text" placeholder="Enter orders" disabled></td></tr>
-                            <tr><td><input type="text" placeholder="Enter business name" disabled></td><td><input type="text" placeholder="Enter orders" disabled></td></tr>
-                            <tr><td><input type="text" placeholder="Enter business name" disabled></td><td><input type="text" placeholder="Enter orders" disabled></td></tr>
-                            <tr><td><input type="text" placeholder="Enter business name" disabled></td><td><input type="text" placeholder="Enter orders" disabled></td></tr>
+                            <!-- Client data will be populated by JavaScript -->
                         </tbody>
                     </table>
                 </div>
@@ -443,20 +447,14 @@
             <div class="client-details">
                 <div class="client-details-header">
                     Client details
-                    <button class="edit-btn" onclick="toggleEdit('details')">Edit</button>
                 </div>
                 <div class="client-details-content">
                     <div class="client-info">
-                        <div>Business Name: <input type="text" placeholder="Enter business name" id="business-name" disabled></div>
-                        <div>Client Number: <input type="text" placeholder="Enter client number" id="client-number" disabled></div>
+                        <div>Business Name: <input type="text" placeholder="Select a client" id="business-name" disabled></div>
+                        <div>Client Number: <input type="text" placeholder="Client number" id="client-number" disabled></div>
                     </div>
-                    <div class="number-grid">
+                    <div class="number-grid" id="number-grid">
                         <!-- Generate number grid 1-100 -->
-                        <script>
-                            for (let i = 1; i <= 100; i++) {
-                                document.write(`<div class="number-cell">${i}</div>`);
-                            }
-                        </script>
                     </div>
                 </div>
             </div>
@@ -465,7 +463,6 @@
             <div class="items-section">
                 <div class="items-header">
                     Items in the order
-                    <button class="edit-btn" onclick="toggleEdit('items')">Edit</button>
                 </div>
                 <div class="table-container">
                     <table class="items-table">
@@ -476,21 +473,7 @@
                             </tr>
                         </thead>
                         <tbody id="items-tbody">
-                            <tr><td><input type="text" placeholder="Enter item name" disabled></td><td><input type="text" placeholder="Enter quantity" disabled></td></tr>
-                            <tr><td><input type="text" placeholder="Enter item name" disabled></td><td><input type="text" placeholder="Enter quantity" disabled></td></tr>
-                            <tr><td><input type="text" placeholder="Enter item name" disabled></td><td><input type="text" placeholder="Enter quantity" disabled></td></tr>
-                            <tr><td><input type="text" placeholder="Enter item name" disabled></td><td><input type="text" placeholder="Enter quantity" disabled></td></tr>
-                            <tr><td><input type="text" placeholder="Enter item name" disabled></td><td><input type="text" placeholder="Enter quantity" disabled></td></tr>
-                            <tr><td><input type="text" placeholder="Enter item name" disabled></td><td><input type="text" placeholder="Enter quantity" disabled></td></tr>
-                            <tr><td><input type="text" placeholder="Enter item name" disabled></td><td><input type="text" placeholder="Enter quantity" disabled></td></tr>
-                            <tr><td><input type="text" placeholder="Enter item name" disabled></td><td><input type="text" placeholder="Enter quantity" disabled></td></tr>
-                            <tr><td><input type="text" placeholder="Enter item name" disabled></td><td><input type="text" placeholder="Enter quantity" disabled></td></tr>
-                            <tr><td><input type="text" placeholder="Enter item name" disabled></td><td><input type="text" placeholder="Enter quantity" disabled></td></tr>
-                            <tr><td><input type="text" placeholder="Enter item name" disabled></td><td><input type="text" placeholder="Enter quantity" disabled></td></tr>
-                            <tr><td><input type="text" placeholder="Enter item name" disabled></td><td><input type="text" placeholder="Enter quantity" disabled></td></tr>
-                            <tr><td><input type="text" placeholder="Enter item name" disabled></td><td><input type="text" placeholder="Enter quantity" disabled></td></tr>
-                            <tr><td><input type="text" placeholder="Enter item name" disabled></td><td><input type="text" placeholder="Enter quantity" disabled></td></tr>
-                            <tr><td><input type="text" placeholder="Enter item name" disabled></td><td><input type="text" placeholder="Enter quantity" disabled></td></tr>
+                            <!-- Items will be populated when a client is selected -->
                         </tbody>
                     </table>
                 </div>
@@ -507,6 +490,278 @@
     </div>
 
     <script>
+        // Random data for clients with multiple orders since i can't use actual client names
+        const clientsData = [
+            { businessName: "Metro Coffee House", orders: 23, clientNumber: "CL001", orderDetails: {
+                1: [{name: "Espresso Beans", quantity: 50}, {name: "Coffee Filters", quantity: 100}],
+                2: [{name: "Sugar Packets", quantity: 200}, {name: "Cream", quantity: 30}],
+                3: [{name: "Coffee Cups", quantity: 500}, {name: "Lids", quantity: 500}],
+                4: [{name: "Stirrers", quantity: 1000}, {name: "Napkins", quantity: 200}],
+                5: [{name: "Espresso Beans", quantity: 25}, {name: "Decaf Beans", quantity: 15}]
+            }},
+            { businessName: "Sunrise Bakery", orders: 18, clientNumber: "CL002", orderDetails: {
+                1: [{name: "Flour Bags", quantity: 25}, {name: "Yeast Packs", quantity: 15}],
+                2: [{name: "Vanilla Extract", quantity: 5}, {name: "Baking Powder", quantity: 10}],
+                3: [{name: "Chocolate Chips", quantity: 20}, {name: "Butter", quantity: 30}],
+                4: [{name: "Sugar", quantity: 40}, {name: "Eggs", quantity: 60}],
+                5: [{name: "Cake Boxes", quantity: 100}, {name: "Cupcake Liners", quantity: 500}]
+            }},
+            { businessName: "Green Valley Restaurant", orders: 31, clientNumber: "CL003", orderDetails: {
+                1: [{name: "Organic Vegetables", quantity: 80}, {name: "Free-range Chicken", quantity: 40}],
+                2: [{name: "Pasta Boxes", quantity: 60}, {name: "Olive Oil", quantity: 12}],
+                3: [{name: "Fresh Herbs", quantity: 25}, {name: "Garlic", quantity: 10}],
+                4: [{name: "Tomatoes", quantity: 50}, {name: "Onions", quantity: 30}],
+                5: [{name: "Cheese Wheels", quantity: 8}, {name: "Wine Bottles", quantity: 24}]
+            }},
+            { businessName: "Tech Solutions Inc", orders: 12, clientNumber: "CL004", orderDetails: {
+                1: [{name: "Office Supplies", quantity: 150}, {name: "Printer Paper", quantity: 500}],
+                2: [{name: "Toner Cartridges", quantity: 12}, {name: "Staplers", quantity: 25}],
+                3: [{name: "Pens", quantity: 200}, {name: "Notebooks", quantity: 100}],
+                4: [{name: "Folders", quantity: 150}, {name: "Binders", quantity: 50}],
+                5: [{name: "Computers", quantity: 5}, {name: "Monitors", quantity: 10}]
+            }},
+            { businessName: "Bloom Flower Shop", orders: 27, clientNumber: "CL005", orderDetails: {
+                1: [{name: "Rose Bouquets", quantity: 75}, {name: "Flower Food", quantity: 30}],
+                2: [{name: "Vases", quantity: 20}, {name: "Ribbon", quantity: 100}],
+                3: [{name: "Tulips", quantity: 50}, {name: "Carnations", quantity: 40}],
+                4: [{name: "Wrapping Paper", quantity: 200}, {name: "Cards", quantity: 100}],
+                5: [{name: "Lily Bulbs", quantity: 30}, {name: "Potting Soil", quantity: 25}]
+            }},
+            { businessName: "City Gym & Fitness", orders: 19, clientNumber: "CL006", orderDetails: {
+                1: [{name: "Protein Powder", quantity: 25}, {name: "Towels", quantity: 100}],
+                2: [{name: "Water Bottles", quantity: 80}, {name: "Energy Bars", quantity: 200}],
+                3: [{name: "Dumbbells", quantity: 20}, {name: "Yoga Mats", quantity: 30}],
+                4: [{name: "Resistance Bands", quantity: 50}, {name: "Jump Ropes", quantity: 25}],
+                5: [{name: "Pre-workout", quantity: 15}, {name: "Shaker Bottles", quantity: 40}]
+            }},
+            { businessName: "Ocean View Hotel", orders: 45, clientNumber: "CL007", orderDetails: {
+                1: [{name: "Bed Linens", quantity: 200}, {name: "Toiletries", quantity: 300}],
+                2: [{name: "Mini Bar Items", quantity: 150}, {name: "Room Service Menus", quantity: 500}],
+                3: [{name: "Towels", quantity: 250}, {name: "Bathrobes", quantity: 100}],
+                4: [{name: "Coffee Packets", quantity: 1000}, {name: "Tea Bags", quantity: 800}],
+                5: [{name: "Shampoo Bottles", quantity: 200}, {name: "Soap Bars", quantity: 400}]
+            }},
+            { businessName: "Digital Marketing Pro", orders: 8, clientNumber: "CL008", orderDetails: {
+                1: [{name: "Business Cards", quantity: 5000}, {name: "Brochures", quantity: 1000}],
+                2: [{name: "Banner Stands", quantity: 10}, {name: "Flyers", quantity: 2000}],
+                3: [{name: "Poster Prints", quantity: 50}, {name: "Stickers", quantity: 5000}],
+                4: [{name: "T-shirts", quantity: 100}, {name: "Pens", quantity: 500}],
+                5: [{name: "Magnets", quantity: 1000}, {name: "Calendars", quantity: 200}]
+            }},
+            { businessName: "Fresh Market Deli", orders: 35, clientNumber: "CL009", orderDetails: {
+                1: [{name: "Sandwich Wraps", quantity: 500}, {name: "Cold Cuts", quantity: 30}],
+                2: [{name: "Cheese Blocks", quantity: 25}, {name: "Bread Loaves", quantity: 100}],
+                3: [{name: "Lettuce", quantity: 50}, {name: "Tomatoes", quantity: 40}],
+                4: [{name: "Mayo Jars", quantity: 20}, {name: "Mustard Bottles", quantity: 15}],
+                5: [{name: "Pickles", quantity: 30}, {name: "Olives", quantity: 25}]
+            }},
+            { businessName: "AutoCare Service", orders: 22, clientNumber: "CL010", orderDetails: {
+                1: [{name: "Motor Oil", quantity: 48}, {name: "Air Filters", quantity: 36}],
+                2: [{name: "Brake Pads", quantity: 24}, {name: "Spark Plugs", quantity: 50}],
+                3: [{name: "Windshield Wipers", quantity: 30}, {name: "Batteries", quantity: 15}],
+                4: [{name: "Tire Pressure Gauges", quantity: 20}, {name: "Coolant", quantity: 25}],
+                5: [{name: "Transmission Fluid", quantity: 12}, {name: "Brake Fluid", quantity: 18}]
+            }},
+            { businessName: "Bright Minds Daycare", orders: 16, clientNumber: "CL011", orderDetails: {
+                1: [{name: "Art Supplies", quantity: 200}, {name: "Educational Toys", quantity: 50}],
+                2: [{name: "Snack Packs", quantity: 300}, {name: "Juice Boxes", quantity: 400}],
+                3: [{name: "Crayons", quantity: 100}, {name: "Coloring Books", quantity: 80}],
+                4: [{name: "Play Dough", quantity: 50}, {name: "Safety Scissors", quantity: 25}],
+                5: [{name: "Story Books", quantity: 60}, {name: "Puzzles", quantity: 40}]
+            }},
+            { businessName: "Elite Fashion Boutique", orders: 29, clientNumber: "CL012", orderDetails: {
+                1: [{name: "Designer Dresses", quantity: 40}, {name: "Accessories", quantity: 100}],
+                2: [{name: "Gift Bags", quantity: 200}, {name: "Hangers", quantity: 300}],
+                3: [{name: "Jewelry Display", quantity: 20}, {name: "Mirrors", quantity: 5}],
+                4: [{name: "Scarves", quantity: 50}, {name: "Belts", quantity: 75}],
+                5: [{name: "Shoes", quantity: 60}, {name: "Purses", quantity: 45}]
+            }},
+            { businessName: "Mountain View Pharmacy", orders: 41, clientNumber: "CL013", orderDetails: {
+                1: [{name: "Prescription Bottles", quantity: 1000}, {name: "Bandages", quantity: 200}],
+                2: [{name: "Thermometers", quantity: 25}, {name: "Vitamins", quantity: 150}],
+                3: [{name: "First Aid Kits", quantity: 50}, {name: "Hand Sanitizer", quantity: 100}],
+                4: [{name: "Face Masks", quantity: 500}, {name: "Gloves", quantity: 200}],
+                5: [{name: "Blood Pressure Monitors", quantity: 15}, {name: "Glucose Strips", quantity: 300}]
+            }},
+            { businessName: "Cozy Pet Store", orders: 24, clientNumber: "CL014", orderDetails: {
+                1: [{name: "Dog Food Bags", quantity: 60}, {name: "Cat Litter", quantity: 40}],
+                2: [{name: "Pet Toys", quantity: 80}, {name: "Leashes", quantity: 50}],
+                3: [{name: "Bird Seed", quantity: 30}, {name: "Fish Food", quantity: 25}],
+                4: [{name: "Pet Beds", quantity: 35}, {name: "Collars", quantity: 60}],
+                5: [{name: "Treats", quantity: 100}, {name: "Grooming Supplies", quantity: 45}]
+            }},
+            { businessName: "Quick Fix Electronics", orders: 13, clientNumber: "CL015", orderDetails: {
+                1: [{name: "Phone Cases", quantity: 150}, {name: "Charging Cables", quantity: 200}],
+                2: [{name: "Screen Protectors", quantity: 100}, {name: "Power Banks", quantity: 50}],
+                3: [{name: "Headphones", quantity: 75}, {name: "Bluetooth Speakers", quantity: 30}],
+                4: [{name: "Memory Cards", quantity: 40}, {name: "USB Drives", quantity: 60}],
+                5: [{name: "Tablet Stands", quantity: 25}, {name: "Car Chargers", quantity: 80}]
+            }}
+        ];
+
+        let selectedClientIndex = -1;
+        let selectedOrderNumber = -1;
+
+        // Populate clients table
+        function populateClientsTable() {
+            const tbody = document.getElementById('clients-tbody');
+            tbody.innerHTML = '';
+            
+            clientsData.forEach((client, index) => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td><input type="text" value="${client.businessName}" disabled></td>
+                    <td><input type="text" value="${client.orders}" disabled></td>
+                `;
+                row.addEventListener('click', () => selectClient(index));
+                tbody.appendChild(row);
+            });
+        }
+
+        // Select client and populate details
+        function selectClient(index) {
+            // Remove previous selection
+            const previousSelected = document.querySelector('.clients-table tr.selected');
+            if (previousSelected) {
+                previousSelected.classList.remove('selected');
+            }
+            
+            // Select new row
+            const rows = document.querySelectorAll('.clients-table tr');
+            rows[index + 1].classList.add('selected'); // +1 because of header row
+            
+            selectedClientIndex = index;
+            const client = clientsData[index];
+            
+            // Update client details
+            document.getElementById('business-name').value = client.businessName;
+            document.getElementById('client-number').value = client.clientNumber;
+            
+            // Update items table
+            populateItemsTable([]);
+            
+            // Update number grid to show client's orders
+            updateOrderGrid(client.orders);
+        }
+
+        // Populate items table for selected client
+        function populateItemsTable(items) {
+            const tbody = document.getElementById('items-tbody');
+            tbody.innerHTML = '';
+            
+            // Add items from selected client
+            items.forEach(item => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td><input type="text" value="${item.name}" disabled></td>
+                    <td><input type="text" value="${item.quantity}" disabled></td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+
+        // Generate empty number grid initially
+        function generateNumberGrid() {
+            const grid = document.getElementById('number-grid');
+            for (let i = 1; i <= 100; i++) {
+                const cell = document.createElement('div');
+                cell.className = 'number-cell';
+                cell.style.background = '#f5f5f5';
+                cell.style.color = '#ccc';
+                cell.textContent = '';
+                cell.style.cursor = 'default';
+                grid.appendChild(cell);
+            }
+        }
+
+        // Update number grid to show client's orders
+        function updateOrderGrid(clientOrderCount) {
+            const grid = document.getElementById('number-grid');
+            grid.innerHTML = ''; // Clear existing grid
+            
+            // Create cells for each order
+            for (let i = 1; i <= clientOrderCount; i++) {
+                const cell = document.createElement('div');
+                cell.className = 'number-cell';
+                cell.textContent = i;
+                cell.title = `Order #${i}`;
+                
+                cell.addEventListener('click', () => {
+                    selectOrder(i);
+                });
+                grid.appendChild(cell);
+            }
+            
+            // Fill remaining space if less than 100 orders
+            if (clientOrderCount < 100) {
+                for (let i = clientOrderCount + 1; i <= 100; i++) {
+                    const cell = document.createElement('div');
+                    cell.className = 'number-cell';
+                    cell.style.background = '#f5f5f5';
+                    cell.style.color = '#ccc';
+                    cell.textContent = '';
+                    cell.style.cursor = 'default';
+                    grid.appendChild(cell);
+                }
+            }
+        }
+        
+        // Select specific order and show its items
+        function selectOrder(orderNumber) {
+            if (selectedClientIndex === -1) return;
+            
+            // Remove previous order selection
+            document.querySelectorAll('.number-cell').forEach(cell => {
+                cell.classList.remove('selected');
+            });
+            
+            // Highlight selected order
+            const orderCells = document.querySelectorAll('.number-cell');
+            if (orderCells[orderNumber - 1]) {
+                orderCells[orderNumber - 1].classList.add('selected');
+            }
+            
+            selectedOrderNumber = orderNumber;
+            
+            // Get items for this specific order
+            const client = clientsData[selectedClientIndex];
+            const orderItems = client.orderDetails[orderNumber] || [];
+            
+            // Generate random items for orders that don't have predefined items
+            if (orderItems.length === 0) {
+                const randomItems = generateRandomOrderItems(client.businessName);
+                populateItemsTable(randomItems);
+            } else {
+                populateItemsTable(orderItems);
+            }
+        }
+        
+        // Generate random items based on business type
+        function generateRandomOrderItems(businessName) {
+            const itemCategories = {
+                "Metro Coffee House": [
+                    {name: "Espresso Beans", quantity: Math.floor(Math.random() * 50) + 10},
+                    {name: "Coffee Filters", quantity: Math.floor(Math.random() * 100) + 50},
+                    {name: "Sugar Packets", quantity: Math.floor(Math.random() * 200) + 100}
+                ],
+                "Sunrise Bakery": [
+                    {name: "Flour Bags", quantity: Math.floor(Math.random() * 20) + 5},
+                    {name: "Yeast Packs", quantity: Math.floor(Math.random() * 10) + 5},
+                    {name: "Baking Soda", quantity: Math.floor(Math.random() * 15) + 5}
+                ],
+            };
+            
+            // Return items specific to business or generic items
+            if (itemCategories[businessName]) {
+                return itemCategories[businessName];
+            } else {
+                return [
+                    {name: "Generic Item A", quantity: Math.floor(Math.random() * 50) + 10},
+                    {name: "Generic Item B", quantity: Math.floor(Math.random() * 30) + 5},
+                ];
+            }
+        }
+
         // Navigation function
         function navigateTo(page) {
             window.location.href = page;
@@ -514,9 +769,7 @@
 
         // Exit app function
         function exitApp() {
-            if (confirm('Are you sure you want to exit the application?')) {
-                window.close();
-            }
+            window.open('https://www.google.com', '_blank');
         }
 
         // Handle hover trigger for sidebar
@@ -553,31 +806,14 @@
             }, 100);
         });
 
-        // Edit functionality
-        function toggleEdit(section) {
-            const editBtn = event.target;
-            const isEditing = editBtn.textContent === 'Save';
+        // Initialize page
+        document.addEventListener('DOMContentLoaded', function() {
+            populateClientsTable();
+            generateNumberGrid();
             
-            if (section === 'clients') {
-                const inputs = document.querySelectorAll('#clients-tbody input');
-                inputs.forEach(input => {
-                    input.disabled = isEditing;
-                });
-            } else if (section === 'details') {
-                const businessName = document.getElementById('business-name');
-                const clientNumber = document.getElementById('client-number');
-                businessName.disabled = isEditing;
-                clientNumber.disabled = isEditing;
-            } else if (section === 'items') {
-                const inputs = document.querySelectorAll('#items-tbody input');
-                inputs.forEach(input => {
-                    input.disabled = isEditing;
-                });
-            }
-            
-            editBtn.textContent = isEditing ? 'Edit' : 'Save';
-            editBtn.style.background = isEditing ? '#4CAF50' : '#ff6b35';
-        }
+            // Initialize items table with empty rows
+            populateItemsTable([]);
+        });
     </script>
 </body>
 </html>
