@@ -6,38 +6,45 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
   <style>
-    /* Set base font and background styles */
+    /* =====================
+       Base Page Styling
+    ======================*/
     body {
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
       margin: 0;
       padding: 0;
-      background-color: #f0f2f5;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      height: 100vh;
+      background-color: #000000; /* Black background */
+      display: flex;             /* Center content horizontally */
+      align-items: center;       /* Center content vertically */
+      justify-content: center;   
+      height: 100vh;             /* Full height of viewport */
     }
 
-    /* Style for the login form card */
+    /* =====================
+       Login Card Styling
+    ======================*/
     .card {
-      background-color: #161616;
+      background-color: #161616; /* Dark gray card */
       padding: 50px 50px;
       border-radius: 12px;
       width: 100%;
-      max-width: 400px;
-      box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
-      z-index: 1; /* Keep form above background images */
+      max-width: 400px;          /* Limit width */
+      box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+      z-index: 1;                /* Keep above background images */
       position: relative;
     }
 
-    /* Heading */
+    /* Heading inside card */
     h2 {
       text-align: center;
       color: #706a6a;
+      margin-bottom: 30px;
     }
 
-    /* Input fields */
-    input[type="text"], input[type="password"] {
+    /* =====================
+       Input Fields Styling
+    ======================*/
+    input[type="text"], input[type="email"], input[type="password"] {
       width: 100%;
       padding: 12px;
       margin: 12px 0;
@@ -45,18 +52,21 @@
       border-radius: 8px;
       background: #f9f9f9;
       font-size: 16px;
+      box-sizing: border-box;
     }
 
-    /* Focused input field */
+    /* Highlight input when focused */
     input:focus {
       border-color: #04AA6D;
       outline: none;
       background: #fff;
     }
 
-    /* Login button */
+    /* =====================
+       Button Styling
+    ======================*/
     button {
-      width: 106%;
+      width: 100%;
       background-color: #04AA6D;
       color: white;
       padding: 14px;
@@ -65,106 +75,378 @@
       border-radius: 8px;
       font-size: 16px;
       cursor: pointer;
+      transition: all 0.3s ease;
     }
+
+    /* Button click effect */
     .button:active {
-  background-color: #3e8e41;
-  box-shadow: 0 5px #666;
-  transform: translateY(4px);
-}
+      background-color: #3e8e41;
+      box-shadow: 0 5px #666;
+      transform: translateY(4px);
+    }
+
     /* Button hover effect */
     button:hover {
       background-color: #039e64;
     }
 
-    /* Signup link text */
-    .signup-link {
+    /* Disabled button */
+    button:disabled {
+      background-color: #666;
+      cursor: not-allowed;
+    }
+
+    /* =====================
+       Links (signup/auth)
+    ======================*/
+    .signup-link, .auth-link {
       text-align: center;
       margin-top: 20px;
       font-size: 14px;
       color: #666;
     }
 
-    /* Link styling */
-    .signup-link a {
+    .signup-link a, .auth-link a {
       color: dodgerblue;
       text-decoration: none;
     }
 
-    .signup-link a:hover {
+    .signup-link a:hover, .auth-link a:hover {
       text-decoration: underline;
     }
 
-    /* Positioning for the corner logos */
+    /* =====================
+       Corner Logo Styling
+    ======================*/
     .corner-img {
       position: absolute;
-      z-index: 1; /* Behind form  --------- changed this 0*/
+      z-index: 0;
       opacity: 0.95;
     }
 
     /* Top-left image */
-    .top-left {
-      top: 10px;
-      left: 10px;
-      height: 40px;
-    }
-
+    .top-left { top: 10px; left: 10px; height: 40px; }
     /* Top-right image */
-    .top-right {
-      top: 10px;
-      right: 10px;
-      height: 60px;
-    }
-
+    .top-right { top: 10px; right: 10px; height: 60px; }
     /* Bottom-left image */
-    .bottom-left {
-      bottom: 10px;
-      left: 10px;
-      height: 40px;
+    .bottom-left { bottom: 10px; left: 10px; height: 40px; }
+    /* Bottom-right image */
+    .bottom-right { bottom: 10px; right: 10px; height: 60px; }
+
+    /* =====================
+       2FA (Two-Factor) Styling
+    ======================*/
+    .form-label {
+      display: block;
+      font-size: 16px;
+      color: white;
+      margin-bottom: 12px;
+      font-weight: 400;
     }
 
-    /* Bottom-right image */
-    .bottom-right {
-      bottom: 10px;
-      right: 10px;
+    .subtitle {
+      text-align: center;
+      font-size: 16px;
+      color: #cccccc;
+      margin-bottom: 30px;
+      font-weight: 300;
+    }
+
+    /* Code input boxes for 2FA */
+    .code-container {
+      display: flex;
+      gap: 10px;
+      justify-content: center;
+      margin: 12px 0;
+    }
+
+    .code-input {
+      width: 60px;
       height: 60px;
+      background: #f9f9f9;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      text-align: center;
+      font-size: 20px;
+      font-weight: bold;
+      color: #333;
+    }
+
+    .code-input:focus {
+      outline: 2px solid #04AA6D;
+      background: #ffffff;
+    }
+
+    /* Hide all forms by default */
+    .form-container { display: none; }
+    .form-container.active { display: block; }
+
+    /* Success message after login */
+    .success-message {
+      background-color: #04AA6D;
+      color: white;
+      padding: 15px;
+      border-radius: 8px;
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    /* Show password checkbox styling */
+    .checkbox-container {
+      margin-top: 8px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .checkbox-container label {
+      color: white;
+      font-size: 14px;
     }
   </style>
 </head>
 
-<body style="background-color: black;">
-
+<body>
   <!-- Four corner logos -->
-  <!-- Make sure these image files are in the same folder or update the path -->
   <img src="Smart Track.png" alt="Top Left Logo" class="corner-img top-left">
   <img src="Swadam.png" alt="Top Right Logo" class="corner-img top-right">
   <img src="Smart Track.png" alt="Bottom Left Logo" class="corner-img bottom-left">
   <img src="Swadam.png" alt="Bottom Right Logo" class="corner-img bottom-right">
 
-  <!-- Login form container -->
+  <!-- Main login card -->
   <div class="card">
-    <h2>Smart Track Login</h2>
+    
+    <!-- Login Form -->
+    <div id="loginForm" class="form-container active">
+      <h2>Smart Track Login</h2>
 
-    <!-- Login form -->
-    <form action="/login" method="post">
-      <!-- Email input -->
-      <input type="text" name="email" placeholder="Email" required>
+      <form onsubmit="handleLogin(event)">
+        <!-- Email field -->
+        <input type="text" name="email" placeholder="Email" required>
 
-      <!-- Password input -->
-      <input type="password" name="password" placeholder="Password" required>
-      <!-- Show Password toggle -->
-      <div style="margin-top: 8px;">
-      <input type="checkbox" id="togglePassword" onclick="togglePasswordVisibility()">
-      <label for="togglePassword" style="color: white; font-size: 14px;">Show Password</label>
+        <!-- Password field -->
+        <input type="password" name="password" id="loginPassword" placeholder="Password" required>
+        
+        <!-- Show Password checkbox -->
+        <div class="checkbox-container">
+          <input type="checkbox" id="togglePassword" onchange="togglePasswordVisibility()">
+          <label for="togglePassword">Show Password</label>
+        </div>
 
-      <!-- Submit button -->
-      <button type="submit">Log In</button>
-    </form>
+        <!-- Login button -->
+        <button type="submit">Log In</button>
+      </form>
 
-    <!-- Link to signup page if user doesn't have an account -->
-    <div class="signup-link">
-      Don't have an account? <a href="signup.html">Sign Up</a>
+      <!-- Link to signup -->
+      <div class="signup-link">
+        Don't have an account? <a href="signup.html">Sign Up</a>
+      </div>
     </div>
+
+    <!-- Two-Factor Authentication Form -->
+    <div id="twoFactorForm" class="form-container">
+      <h2>Two Factor Authentication</h2>
+      <p class="subtitle">Enter the code sent to your email</p>
+
+      <form onsubmit="handle2FA(event)">
+        <!-- Email (read-only) -->
+        <div>
+          <label class="form-label">Your Email:</label>
+          <input type="email" id="twoFactorEmail" class="email-input" readonly>
+        </div>
+
+        <!-- Code inputs -->
+        <div>
+          <label class="form-label">Enter Code:</label>
+          <div class="code-container">
+            <!-- 5 digit code inputs -->
+            <input type="text" class="code-input" maxlength="1" oninput="moveToNext(this, 0)">
+            <input type="text" class="code-input" maxlength="1" oninput="moveToNext(this, 1)">
+            <input type="text" class="code-input" maxlength="1" oninput="moveToNext(this, 2)">
+            <input type="text" class="code-input" maxlength="1" oninput="moveToNext(this, 3)">
+            <input type="text" class="code-input" maxlength="1" oninput="moveToNext(this, 4)">
+          </div>
+        </div>
+
+        <!-- Verify code button -->
+        <button type="submit">Verify Code</button>
+      </form>
+
+      <!-- Links: back to login & resend code -->
+      <div class="auth-link">
+        <a href="#" onclick="showLogin()">← Back to Login</a> | 
+        <a href="#" onclick="resendCode()">Resend Code</a>
+      </div>
+    </div>
+
+    <!-- Success Screen -->
+    <div id="successForm" class="form-container">
+      <div class="success-message">
+        <h2 style="color: white; margin: 0;">Welcome Back!</h2>
+        <p style="margin: 10px 0 0 0;">Login successful. Redirecting to Homepage...</p>
+      </div>
+      
+      <button onclick="redirectToDashboard()">Go to Homepage</button>
+    </div>
+
   </div>
 
+  <script>
+    let currentUserEmail = ''; // Store logged in email for reference
+
+    /* =====================
+       Password Visibility Toggle
+    ======================*/
+    function togglePasswordVisibility() {
+      const passwordField = document.getElementById('loginPassword');
+      const checkbox = document.getElementById('togglePassword');
+      passwordField.type = checkbox.checked ? 'text' : 'password';
+    }
+
+    /* =====================
+       Form Switching
+    ======================*/
+    function showLogin() {
+      hideAllForms();
+      document.getElementById('loginForm').classList.add('active');
+    }
+
+    function show2FA(email) {
+      currentUserEmail = email;
+      document.getElementById('twoFactorEmail').value = email;
+      hideAllForms();
+      document.getElementById('twoFactorForm').classList.add('active');
+      
+      // Auto-focus first code input
+      setTimeout(() => {
+        document.querySelector('.code-input').focus();
+      }, 100);
+    }
+
+    function showSuccess() {
+      hideAllForms();
+      document.getElementById('successForm').classList.add('active');
+      
+      // Auto-redirect after 1s
+      setTimeout(() => {
+        redirectToDashboard();
+      }, 1000);
+    }
+
+    function redirectToDashboard() {
+      // In real app: store login in localStorage / session
+      // For now: redirect to homepage
+      window.location.href = 'Homepage.html';
+    }
+
+    function hideAllForms() {
+      document.querySelectorAll('.form-container').forEach(form => {
+        form.classList.remove('active');
+      });
+    }
+
+    /* =====================
+       Login Handler
+    ======================*/
+    function handleLogin(event) {
+      event.preventDefault(); // Prevent page reload
+      
+      const formData = new FormData(event.target);
+      const email = formData.get('email');
+      const password = formData.get('password');
+      
+      // Basic validation
+      if (!email || !password) {
+        alert('Please fill in all fields');
+        return;
+      }
+      
+      // Simulate loading state
+      const button = event.target.querySelector('button');
+      const originalText = button.textContent;
+      button.textContent = 'Logging in...';
+      button.disabled = true;
+      
+      // Simulate login success → trigger 2FA
+      setTimeout(() => {
+        show2FA(email);
+        button.textContent = originalText;
+        button.disabled = false;
+        
+        // Reset login form
+        event.target.reset();
+        document.getElementById('togglePassword').checked = false;
+        document.getElementById('loginPassword').type = 'password';
+      }, 1000);
+    }
+
+    /* =====================
+       2FA Code Navigation
+    ======================*/
+    function moveToNext(current, index) {
+      const inputs = document.querySelectorAll('.code-input');
+      
+      // Move to next field when filled
+      if (current.value.length === 1 && index < inputs.length - 1) {
+        inputs[index + 1].focus();
+      }
+      
+      // Handle backspace navigation
+      current.addEventListener('keydown', function(e) {
+        if (e.key === 'Backspace' && current.value === '' && index > 0) {
+          inputs[index - 1].focus();
+        }
+      });
+    }
+
+    /* =====================
+       2FA Handler
+    ======================*/
+    function handle2FA(event) {
+      event.preventDefault();
+      
+      const codeInputs = document.querySelectorAll('.code-input');
+      const code = Array.from(codeInputs).map(input => input.value).join('');
+      
+      // Require all 5 digits
+      if (code.length !== 5) {
+        alert('Please enter the complete 5-digit code');
+        return;
+      }
+      
+      const button = event.target.querySelector('button');
+      button.textContent = 'Verifying...';
+      button.disabled = true;
+      
+      // Simulate successful verification
+      setTimeout(() => {
+        showSuccess();
+        button.textContent = 'Verify Code';
+        button.disabled = false;
+        
+        // Reset code inputs
+        codeInputs.forEach(input => input.value = '');
+      }, 1500);
+    }
+
+    /* =====================
+       Resend 2FA Code
+    ======================*/
+    function resendCode() {
+      alert('Verification code has been resent to ' + currentUserEmail);
+      // Real app: trigger server-side resend
+    }
+
+    /* =====================
+       Restrict Code Inputs to Numbers
+    ======================*/
+    document.addEventListener('DOMContentLoaded', function() {
+      document.querySelectorAll('.code-input').forEach(input => {
+        input.addEventListener('input', function() {
+          this.value = this.value.replace(/[^0-9]/g, ''); // Only numbers
+        });
+      });
+    });
+  </script>
 </body>
 </html>
