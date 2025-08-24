@@ -138,24 +138,6 @@
             position: relative;
         }
 
-        .edit-button {
-            position: absolute;
-            top: 8px;
-            right: 10px;
-            background-color: #666;
-            color: white;
-            border: none;
-            padding: 4px 8px;
-            font-size: 12px;
-            border-radius: 3px;
-            cursor: pointer;
-            transition: background-color 0.3s ease;
-        }
-
-        .edit-button:hover {
-            background-color: #444;
-        }
-
         .client-rows {
             display: flex;
             flex-direction: column;
@@ -398,7 +380,6 @@
                 <div class="clients-section">
                     <div class="clients-header">
                         Clients
-                        <button class="edit-button" onclick="editClients()">Edit</button>
                     </div>
                     <div class="client-rows" id="clientRows">
                         <div class="client-row" onclick="selectClient('ABC Corporation')">
@@ -660,10 +641,6 @@
                 }
             }, 100);
         });
-
-        function editClients() {
-            alert('Edit Clients functionality would be implemented here.');
-        }
 
         // Initialize display
         document.addEventListener('DOMContentLoaded', function() {
