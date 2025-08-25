@@ -162,6 +162,8 @@
             background: transparent;
             padding: 5px;
             font-size: 14px;
+            cursor: pointer;
+            pointer-events: none;
         }
 
         .clients-table td input:focus {
@@ -183,6 +185,10 @@
         }
 
         .clients-table tr.selected td {
+            color: white;
+        }
+
+        .clients-table tr.selected td input {
             color: white;
         }
 
@@ -592,10 +598,16 @@
             clientsData.forEach((client, index) => {
                 const row = document.createElement('tr');
                 row.innerHTML = `
-                    <td><input type="text" value="${client.businessName}" disabled></td>
-                    <td><input type="text" value="${client.orders}" disabled></td>
+                    <td><input type="text" value="${client.businessName}" readonly></td>
+                    <td><input type="text" value="${client.orders}" readonly></td>
                 `;
-                row.addEventListener('click', () => selectClient(index));
+                
+                // Add click event to the entire row
+                row.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    selectClient(index);
+                });
+                
                 tbody.appendChild(row);
             });
         }
@@ -603,14 +615,14 @@
         // Select client and populate details
         function selectClient(index) {
             // Remove previous selection
-            const previousSelected = document.querySelector('.clients-table tr.selected');
+            const previousSelected = document.querySelector('.clients-table tbody tr.selected');
             if (previousSelected) {
                 previousSelected.classList.remove('selected');
             }
             
             // Select new row
-            const rows = document.querySelectorAll('.clients-table tr');
-            rows[index + 1].classList.add('selected'); // +1 because of header row
+            const rows = document.querySelectorAll('.clients-table tbody tr');
+            rows[index].classList.add('selected');
             
             selectedClientIndex = index;
             const client = clientsData[index];
