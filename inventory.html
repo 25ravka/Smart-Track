@@ -219,6 +219,48 @@
             border-radius: 3px;
         }
 
+        /* Invalid date input styling */
+        .inventory-table td input.invalid-date {
+            outline: 2px solid #dc3545 !important;
+            background: #ffe6e6 !important;
+        }
+
+        /* Error message styling */
+        .date-error {
+            position: relative;
+        }
+
+        .date-error-tooltip {
+            position: absolute;
+            bottom: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #dc3545;
+            color: white;
+            padding: 5px 8px;
+            border-radius: 3px;
+            font-size: 11px;
+            white-space: nowrap;
+            z-index: 100;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.2s;
+        }
+
+        .date-error-tooltip::after {
+            content: '';
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            border: 4px solid transparent;
+            border-top-color: #dc3545;
+        }
+
+        .date-error-tooltip.show {
+            opacity: 1;
+        }
+
         /* --------------------
            BOTTOM SECTION
         -------------------- */
@@ -361,6 +403,74 @@
             }, 100);
         });
 
+        // Validate date relationships
+        function validateDates(row) {
+            const inputs = row.querySelectorAll('input');
+            const expiryInput = inputs[3]; // Expiry date
+            const manufactureInput = inputs[4]; // Manufacture date
+
+            const expiryDate = expiryInput.value;
+            const manufactureDate = manufactureInput.value;
+
+            // Clear any existing error states
+            clearDateErrors(row);
+
+            // Only validate if both dates are provided
+            if (expiryDate && manufactureDate) {
+                const expiry = new Date(expiryDate);
+                const manufacture = new Date(manufactureDate);
+
+                if (expiry <= manufacture) {
+                    // Expiry date must be after manufacture date
+                    showDateError(expiryInput, 'Expiry date must be after manufacture date');
+                    return false;
+                }
+            }
+            
+            return true;
+        }
+
+        // Show date validation error
+        function showDateError(input, message) {
+            input.classList.add('invalid-date');
+            
+            // Create error tooltip
+            const tooltip = document.createElement('div');
+            tooltip.className = 'date-error-tooltip show';
+            tooltip.textContent = message;
+            
+            // Position tooltip
+            const cell = input.closest('td');
+            cell.classList.add('date-error');
+            cell.style.position = 'relative';
+            cell.appendChild(tooltip);
+
+            // Auto-hide tooltip after 3 seconds
+            setTimeout(() => {
+                tooltip.classList.remove('show');
+                setTimeout(() => {
+                    if (tooltip.parentNode) {
+                        tooltip.remove();
+                    }
+                }, 200);
+            }, 3000);
+        }
+
+        // Clear date validation errors for a row
+        function clearDateErrors(row) {
+            const inputs = row.querySelectorAll('input');
+            inputs.forEach(input => {
+                input.classList.remove('invalid-date');
+            });
+
+            const errorCells = row.querySelectorAll('.date-error');
+            errorCells.forEach(cell => {
+                cell.classList.remove('date-error');
+                const tooltips = cell.querySelectorAll('.date-error-tooltip');
+                tooltips.forEach(tooltip => tooltip.remove());
+            });
+        }
+
         // Generate table rows with input fields (only if table is empty)
         function generateRows() {
             const tbody = document.getElementById('inventoryBody');
@@ -379,8 +489,8 @@
                                 <input type="number" min="0" step="0.01" style="flex:1; margin-left:4px;" readonly>
                             </div>
                         </td>
-                        <td><input type="date" readonly></td>
-                        <td><input type="date" readonly></td>
+                        <td><input type="date" readonly class="expiry-input"></td>
+                        <td><input type="date" readonly class="manufacture-input"></td>
                     `;
 
                     tbody.appendChild(row);
@@ -411,6 +521,21 @@
                 btn.textContent = 'Save Changes';
                 btn.style.background = '#28a745';
             } else {
+                // Validate all dates before saving
+                const rows = document.querySelectorAll('#inventoryBody tr');
+                let hasErrors = false;
+
+                rows.forEach(row => {
+                    if (!validateDates(row)) {
+                        hasErrors = true;
+                    }
+                });
+
+                if (hasErrors) {
+                    alert('Please fix the date validation errors before saving.');
+                    return; // Don't switch out of edit mode
+                }
+
                 btn.textContent = 'Edit Inventory Items';
                 btn.style.background = '#c44444';
                 saveData(); // Save data when toggling back to view
@@ -470,12 +595,29 @@
         // Initial row generation
         generateRows();
 
-        // Restrict input to numbers only for number fields
+        // Event delegation for input validation
         document.addEventListener('input', function(e) {
+            // Restrict input to numbers only for number fields
             if (e.target.type === 'number') {
                 e.target.value = e.target.value.replace(/[^0-9.]/g, '');
             }
+
+            // Validate dates when they change
+            if (e.target.type === 'date') {
+                const row = e.target.closest('tr');
+                setTimeout(() => {
+                    validateDates(row);
+                }, 10); // Small delay to ensure value is set
+            }
         });
+
+        // Also validate on blur (when user leaves the field)
+        document.addEventListener('blur', function(e) {
+            if (e.target.type === 'date') {
+                const row = e.target.closest('tr');
+                validateDates(row);
+            }
+        }, true);
     </script>
 </body>
 </html>
