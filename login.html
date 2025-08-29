@@ -133,64 +133,6 @@
     /* Bottom-right image */
     .bottom-right { bottom: 10px; right: 10px; height: 60px; }
 
-    /* =====================
-       2FA (Two-Factor) Styling
-    ======================*/
-    .form-label {
-      display: block;
-      font-size: 16px;
-      color: white;
-      margin-bottom: 12px;
-      font-weight: 400;
-    }
-
-    .subtitle {
-      text-align: center;
-      font-size: 16px;
-      color: #cccccc;
-      margin-bottom: 30px;
-      font-weight: 300;
-    }
-
-    /* Code input boxes for 2FA */
-    .code-container {
-      display: flex;
-      gap: 10px;
-      justify-content: center;
-      margin: 12px 0;
-    }
-
-    .code-input {
-      width: 60px;
-      height: 60px;
-      background: #f9f9f9;
-      border: 1px solid #ccc;
-      border-radius: 8px;
-      text-align: center;
-      font-size: 20px;
-      font-weight: bold;
-      color: #333;
-    }
-
-    .code-input:focus {
-      outline: 2px solid #04AA6D;
-      background: #ffffff;
-    }
-
-    /* Hide all forms by default */
-    .form-container { display: none; }
-    .form-container.active { display: block; }
-
-    /* Success message after login */
-    .success-message {
-      background-color: #04AA6D;
-      color: white;
-      padding: 15px;
-      border-radius: 8px;
-      text-align: center;
-      margin-bottom: 20px;
-    }
-
     /* Error message styling */
     .error-message {
       background-color: #dc3545;
@@ -201,9 +143,9 @@
       margin-bottom: 20px;
     }
 
-    /* Info message styling */
-    .info-message {
-      background-color: #17a2b8;
+    /* Success message styling */
+    .success-message {
+      background-color: #28a745;
       color: white;
       padding: 15px;
       border-radius: 8px;
@@ -240,37 +182,6 @@
       0% { transform: rotate(0deg); }
       100% { transform: rotate(360deg); }
     }
-
-    /* Email simulator styling */
-    .email-simulator {
-      background-color: #2a2a2a;
-      border: 1px solid #444;
-      border-radius: 8px;
-      padding: 20px;
-      margin-top: 20px;
-      font-family: monospace;
-      font-size: 14px;
-    }
-
-    .email-header {
-      color: #04AA6D;
-      font-weight: bold;
-      margin-bottom: 15px;
-      border-bottom: 1px solid #444;
-      padding-bottom: 10px;
-    }
-
-    .verification-code {
-      background-color: #04AA6D;
-      color: white;
-      padding: 10px 20px;
-      border-radius: 5px;
-      font-size: 24px;
-      font-weight: bold;
-      letter-spacing: 3px;
-      text-align: center;
-      margin: 15px 0;
-    }
   </style>
 </head>
 
@@ -283,109 +194,35 @@
 
   <!-- Main login card -->
   <div class="card">
-    
-    <!-- Login Form -->
-    <div id="loginForm" class="form-container active">
-      <h2>Smart Track Login</h2>
+    <h2>Smart Track Login</h2>
 
-      <div id="loginError" class="error-message" style="display: none;"></div>
+    <div id="loginError" class="error-message" style="display: none;"></div>
+    <div id="loginSuccess" class="success-message" style="display: none;"></div>
 
-      <form onsubmit="handleLogin(event)">
-        <!-- Email field -->
-        <input type="text" name="email" placeholder="Email" required>
+    <form id="loginForm" onsubmit="handleLogin(event)">
+      <!-- Username field -->
+      <input type="text" id="username" name="username" placeholder="Username" required>
 
-        <!-- Password field -->
-        <input type="password" name="password" id="loginPassword" placeholder="Password" required>
-        
-        <!-- Show Password checkbox -->
-        <div class="checkbox-container">
-          <input type="checkbox" id="togglePassword" onchange="togglePasswordVisibility()">
-          <label for="togglePassword">Show Password</label>
-        </div>
-
-        <!-- Login button -->
-        <button type="submit" id="loginButton">Log In</button>
-      </form>
-
-      <!-- Link to signup -->
-      <div class="signup-link">
-        Don't have an account? <a href="signup.html">Sign Up</a>
-      </div>
-    </div>
-
-    <!-- Email Verification Form -->
-    <div id="emailVerificationForm" class="form-container">
-      <h2>Email Verification</h2>
-      <p class="subtitle" id="verificationSubtitle">We've sent a verification code to your email</p>
-
-      <div id="verificationError" class="error-message" style="display: none;"></div>
-
-      <form onsubmit="handleEmailVerification(event)">
-        <!-- Email (read-only) -->
-        <div>
-          <label class="form-label">Your Email:</label>
-          <input type="email" id="verificationEmail" readonly>
-        </div>
-
-        <!-- Code inputs -->
-        <div>
-          <label class="form-label">Enter 6-digit Verification Code:</label>
-          <div class="code-container">
-            <!-- 6 digit code inputs -->
-            <input type="text" class="code-input" maxlength="1" inputmode="numeric" pattern="[0-9]*" oninput="moveToNext(this, 0)">
-            <input type="text" class="code-input" maxlength="1" inputmode="numeric" pattern="[0-9]*" oninput="moveToNext(this, 1)">
-            <input type="text" class="code-input" maxlength="1" inputmode="numeric" pattern="[0-9]*" oninput="moveToNext(this, 2)">
-            <input type="text" class="code-input" maxlength="1" inputmode="numeric" pattern="[0-9]*" oninput="moveToNext(this, 3)">
-            <input type="text" class="code-input" maxlength="1" inputmode="numeric" pattern="[0-9]*" oninput="moveToNext(this, 4)">
-            <input type="text" class="code-input" maxlength="1" inputmode="numeric" pattern="[0-9]*" oninput="moveToNext(this, 5)">
-          </div>
-        </div>
-
-        <!-- Verify code button -->
-        <button type="submit" id="verifyButton">Verify Code</button>
-      </form>
-
-      <!-- Links: back to login & resend code -->
-      <div class="auth-link">
-        <a href="#" onclick="showLogin()">← Back to Login</a> | 
-        <a href="#" onclick="resendCode()">Resend Code</a>
-      </div>
-
-      <!-- Email Simulator (shows the sent email) -->
-      <div id="emailSimulator" class="email-simulator" style="display: none;">
-        <div class="email-header">📧 Simulated Email - Smart Track Login Verification</div>
-        <div>
-          <strong>From:</strong> noreply@smarttrack.com<br>
-          <strong>To:</strong> <span id="emailRecipient"></span><br>
-          <strong>Subject:</strong> Smart Track Login Verification Code
-        </div>
-        <hr style="border-color: #444; margin: 15px 0;">
-        <p>Hello,</p>
-        <p>Someone is trying to log in to your Smart Track account. Your verification code is:</p>
-        <div class="verification-code" id="displayedCode"></div>
-        <p>This code will expire in 10 minutes.</p>
-        <p>If this wasn't you, please ignore this email and consider changing your password.</p>
-        <p>Best regards,<br>Smart Track Security Team</p>
-      </div>
-    </div>
-
-    <!-- Success Screen -->
-    <div id="successForm" class="form-container">
-      <div class="success-message">
-        <h2 style="color: white; margin: 0;">Welcome Back!</h2>
-        <p style="margin: 10px 0 0 0;">Login successful. Redirecting to Homepage...</p>
-      </div>
+      <!-- Password field -->
+      <input type="password" name="password" id="loginPassword" placeholder="Password" required>
       
-      <button onclick="redirectToDashboard()">Go to Homepage</button>
-    </div>
+      <!-- Show Password checkbox -->
+      <div class="checkbox-container">
+        <input type="checkbox" id="togglePassword" onchange="togglePasswordVisibility()">
+        <label for="togglePassword">Show Password</label>
+      </div>
 
+      <!-- Login button -->
+      <button type="submit" id="loginButton">Log In</button>
+    </form>
+
+    <!-- Link to signup -->
+    <div class="signup-link">
+      Don't have an account? <a href="#" onclick="showSignupDemo()">Sign Up</a>
+    </div>
   </div>
 
   <script>
-    let currentUserEmail = ''; 
-    let currentVerificationCode = '';
-    let verificationAttempts = 0;
-
     /* =====================
        Password Visibility Toggle
     ======================*/
@@ -396,99 +233,16 @@
     }
 
     /* =====================
-       Form Switching
-    ======================*/
-    function showLogin() {
-      hideAllForms();
-      document.getElementById('loginForm').classList.add('active');
-      clearMessages();
-    }
-
-    function showEmailVerification(email) {
-      currentUserEmail = email;
-      document.getElementById('verificationEmail').value = email;
-      document.getElementById('emailRecipient').textContent = email;
-      
-      // Send verification email
-      sendVerificationEmail();
-      
-      hideAllForms();
-      document.getElementById('emailVerificationForm').classList.add('active');
-      
-      // Auto-focus first code input
-      setTimeout(() => {
-        document.querySelector('.code-input').focus();
-      }, 100);
-    }
-
-    function showSuccess() {
-      hideAllForms();
-      document.getElementById('successForm').classList.add('active');
-      
-      // Auto-redirect after 2s
-      setTimeout(() => {
-        redirectToDashboard();
-      }, 2000);
-    }
-
-    function redirectToDashboard() {
-      // Store user session (in real app use secure sessions)
-        window.location.href = 'Homepage.html';
-    }
-
-    function hideAllForms() {
-      document.querySelectorAll('.form-container').forEach(form => {
-        form.classList.remove('active');
-      });
-    }
-
-    function clearMessages() {
-      const messages = document.querySelectorAll('.error-message, .info-message');
-      messages.forEach(msg => msg.style.display = 'none');
-    }
-
-    /* =====================
-       Email Verification System
-    ======================*/
-    function generateVerificationCode() {
-      return Math.floor(100000 + Math.random() * 900000).toString();
-    }
-
-    function sendVerificationEmail() {
-      currentVerificationCode = generateVerificationCode();
-      verificationAttempts = 0;
-      
-      // Display the code in simulator
-      document.getElementById('displayedCode').textContent = currentVerificationCode;
-      document.getElementById('emailSimulator').style.display = 'block';
-      
-      // Simulate email sending delay
-      const subtitle = document.getElementById('verificationSubtitle');
-      subtitle.innerHTML = `<span class="spinner"></span>Sending verification code...`;
-      
-      setTimeout(() => {
-        subtitle.textContent = `Verification code sent to ${currentUserEmail}`;
-        showInfoMessage('Check your email for the verification code. For demo purposes, the code is shown below.');
-      }, 1500);
-    }
-
-    function resendCode() {
-      sendVerificationEmail();
-      showInfoMessage('Verification code has been resent to your email.');
-    }
-
-    /* =====================
-       Login Handler
+       Login Handler with Integrated Logic
     ======================*/
     function handleLogin(event) {
       event.preventDefault(); // Prevent page reload
       
-      const formData = new FormData(event.target);
-      const email = formData.get('email');
-      const password = formData.get('password');
+      const username = document.getElementById('username').value;
+      const password = document.getElementById('loginPassword').value;
       
       // Basic validation
-      if (!email || !password) {
+      if (!username || !password) {
         showErrorMessage('loginError', 'Please fill in all fields');
         return;
       }
@@ -497,82 +251,36 @@
       const button = document.getElementById('loginButton');
       setButtonLoading(button, 'Logging in...');
       
-      // Simulate login success → trigger email verification
+      // Check credentials against stored users
       setTimeout(() => {
-        resetButton(button, 'Log In');
-        showEmailVerification(email);
-        
-        // Reset login form
-        event.target.reset();
-        document.getElementById('togglePassword').checked = false;
-        document.getElementById('loginPassword').type = 'password';
-      }, 1500);
-    }
+        const users = JSON.parse(localStorage.getItem("users")) || [];
+        const user = users.find(u => u.username === username && u.password === password);
 
-    /* =====================
-       Email Verification Handler
-    ======================*/
-    function handleEmailVerification(event) {
-      event.preventDefault();
-      
-      const codeInputs = document.querySelectorAll('.code-input');
-      const enteredCode = Array.from(codeInputs).map(input => input.value).join('');
-      
-      if (enteredCode.length !== 6) {
-        showErrorMessage('verificationError', 'Please enter the complete 6-digit verification code');
-        return;
-      }
-      
-      const button = document.getElementById('verifyButton');
-      setButtonLoading(button, 'Verifying...');
-      
-      setTimeout(() => {
-        verificationAttempts++;
-        
-        if (enteredCode === currentVerificationCode) {
-          // Success
-          resetButton(button, 'Verify Code');
-          showSuccess();
+        if (user) {
+          // Store user info for 2FA page
+          sessionStorage.setItem('pendingUser', username);
+          sessionStorage.setItem('userEmail', username + '@example.com'); // Demo email
+          sessionStorage.setItem('authType', 'login');
           
-          // Reset code inputs
-          codeInputs.forEach(input => input.value = '');
-          document.getElementById('emailSimulator').style.display = 'none';
+          showSuccessMessage('loginSuccess', 'Login successful! Redirecting to 2FA...');
+          
+          // Redirect to 2FA after success message
+          setTimeout(() => {
+            window.location.href = '2fa.html';
+          }, 1000);
           
         } else {
-          // Failed verification
-          resetButton(button, 'Verify Code');
-          
-          if (verificationAttempts >= 3) {
-            showErrorMessage('verificationError', 'Too many failed attempts. Please request a new code.');
-            resendCode(); // Auto-resend new code
-          } else {
-            showErrorMessage('verificationError', `Invalid code. ${3 - verificationAttempts} attempts remaining.`);
-            
-            // Clear inputs and focus first
-            codeInputs.forEach(input => input.value = '');
-            codeInputs[0].focus();
-          }
+          showErrorMessage('loginError', 'Invalid username or password');
+          resetButtonState(button, 'Log In');
         }
-      }, 1500);
+      }, 1000);
     }
 
     /* =====================
-       2FA Code Navigation & Number Restriction
+       Demo Signup Function
     ======================*/
-    function moveToNext(current, index) {
-      const inputs = document.querySelectorAll('.code-input');
-      
-      // Move to next field when filled
-      if (current.value.length === 1 && index < inputs.length - 1) {
-        inputs[index + 1].focus();
-      }
-      
-      // Handle backspace navigation
-      current.addEventListener('keydown', function(e) {
-        if (e.key === 'Backspace' && current.value === '' && index > 0) {
-          inputs[index - 1].focus();
-        }
-      });
+    function showSignupDemo() {
+      window.location.href = 'signup.html';
     }
 
     /* =====================
@@ -583,13 +291,18 @@
       button.disabled = true;
     }
 
-    function resetButton(button, text) {
-      button.textContent = text;
+    function resetButtonState(button, text) {
+      button.innerHTML = text;
       button.disabled = false;
     }
 
     function showErrorMessage(elementId, message) {
       const errorDiv = document.getElementById(elementId);
+      const successDiv = document.getElementById('loginSuccess');
+      
+      // Hide success message if showing
+      successDiv.style.display = 'none';
+      
       errorDiv.textContent = message;
       errorDiv.style.display = 'block';
       setTimeout(() => {
@@ -597,77 +310,24 @@
       }, 5000);
     }
 
-    function showInfoMessage(message) {
-      const infoDiv = document.createElement('div');
-      infoDiv.className = 'info-message';
-      infoDiv.textContent = message;
+    function showSuccessMessage(elementId, message) {
+      const successDiv = document.getElementById(elementId);
+      const errorDiv = document.getElementById('loginError');
       
-      const activeForm = document.querySelector('.form-container.active');
-      activeForm.insertBefore(infoDiv, activeForm.firstChild);
+      // Hide error message if showing
+      errorDiv.style.display = 'none';
       
-      setTimeout(() => {
-        infoDiv.remove();
-      }, 8000);
+      successDiv.textContent = message;
+      successDiv.style.display = 'block';
     }
 
-    /* =====================
-       Enhanced Number-Only Input Restriction
-    ======================*/
-    document.addEventListener('DOMContentLoaded', function() {
-      const codeInputs = document.querySelectorAll('.code-input');
-      
-      codeInputs.forEach(input => {
-        // Block non-numeric input on keypress
-        input.addEventListener('keypress', function(e) {
-          const char = String.fromCharCode(e.which);
-          // Allow only digits 0-9
-          if (!/[0-9]/.test(char)) {
-            e.preventDefault();
-          }
-        });
-        
-        // Clean input on paste or any input change
-        input.addEventListener('input', function() {
-          // Remove any non-numeric characters
-          this.value = this.value.replace(/[^0-9]/g, '');
-          // Limit to single character
-          if (this.value.length > 1) {
-            this.value = this.value.charAt(0);
-          }
-        });
-        
-        // Block spaces and other keys
-        input.addEventListener('keydown', function(e) {
-          // Allow: backspace, delete, tab, escape, enter
-          if ([8, 9, 27, 13, 46].indexOf(e.keyCode) !== -1 ||
-              // Allow: Ctrl+A, Ctrl+C, Ctrl+V, Ctrl+X
-              (e.keyCode === 65 && e.ctrlKey === true) ||
-              (e.keyCode === 67 && e.ctrlKey === true) ||
-              (e.keyCode === 86 && e.ctrlKey === true) ||
-              (e.keyCode === 88 && e.ctrlKey === true) ||
-              // Allow: home, end, left, right, down, up
-              (e.keyCode >= 35 && e.keyCode <= 40)) {
-                return;
-          }
-          // Block space bar specifically
-          if (e.keyCode === 32) {
-            e.preventDefault();
-          }
-        });
-        
-        // Prevent paste of non-numeric content
-        input.addEventListener('paste', function(e) {
-          e.preventDefault();
-          const paste = (e.clipboardData || window.clipboardData).getData('text');
-          const numericPaste = paste.replace(/[^0-9]/g, '');
-          if (numericPaste.length > 0) {
-            this.value = numericPaste.charAt(0);
-            // Trigger input event for navigation
-            this.dispatchEvent(new Event('input'));
-          }
-        });
-      });
-    });
+    function resetLoginForm() {
+      document.getElementById('loginForm').reset();
+      document.getElementById('loginButton').innerHTML = 'Log In';
+      document.getElementById('loginButton').disabled = false;
+      document.getElementById('loginSuccess').style.display = 'none';
+      document.getElementById('loginError').style.display = 'none';
+    }
   </script>
 </body>
 </html>
