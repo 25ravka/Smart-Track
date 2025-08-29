@@ -6,40 +6,44 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
   <style>
-    /* ===== Base styling for the page ===== */
+    /* =====================
+       Base Page Styling
+    ======================*/
     body {
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
       margin: 0;
       padding: 0;
-      background-color: #000000;  /* Black background */
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      height: 100vh;              /* Full screen height */
-      color: white;
+      background-color: #000000; /* Black background */
+      display: flex;             /* Center content horizontally */
+      align-items: center;       /* Center content vertically */
+      justify-content: center;   
+      height: 100vh;             /* Full height of viewport */
     }
 
-    /* ===== Card container styling (the form box) ===== */
+    /* =====================
+       Signup Card Styling
+    ======================*/
     .card {
-      background-color: #161616;
-      padding: 50px;
+      background-color: #161616; /* Dark gray card */
+      padding: 50px 50px;
       border-radius: 12px;
       width: 100%;
-      max-width: 400px;
-      box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
-      z-index: 1;
+      max-width: 400px;          /* Limit width */
+      box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+      z-index: 1;                /* Keep above background images */
       position: relative;
-      transition: all 0.3s ease;
     }
 
-    /* Section heading */
+    /* Heading inside card */
     h2 {
       text-align: center;
       color: #706a6a;
       margin-bottom: 30px;
     }
 
-    /* ===== Input fields styling ===== */
+    /* =====================
+       Input Fields Styling
+    ======================*/
     input[type="text"], input[type="email"], input[type="password"] {
       width: 100%;
       padding: 12px;
@@ -58,43 +62,43 @@
       background: #fff;
     }
 
-    /* ===== Button styling ===== */
+    /* =====================
+       Button Styling
+    ======================*/
     button {
       width: 100%;
       background-color: #04AA6D;
       color: white;
       padding: 14px;
       margin-top: 20px;
-      border: none;
+      border: 0;
       border-radius: 8px;
       font-size: 16px;
       cursor: pointer;
-      transition: background-color 0.3s ease;
+      transition: all 0.3s ease;
     }
 
+    /* Button click effect */
+    .button:active {
+      background-color: #3e8e41;
+      box-shadow: 0 5px #666;
+      transform: translateY(4px);
+    }
+
+    /* Button hover effect */
     button:hover {
       background-color: #039e64;
     }
 
+    /* Disabled button */
     button:disabled {
       background-color: #666;
       cursor: not-allowed;
     }
 
-    /* ===== Show password checkbox ===== */
-    .checkbox-container {
-      margin-top: 8px;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-
-    .checkbox-container label {
-      color: white;
-      font-size: 14px;
-    }
-
-    /* ===== Auth link styling (login/signup switch) ===== */
+    /* =====================
+       Links (signup/auth)
+    ======================*/
     .auth-link {
       text-align: center;
       margin-top: 20px;
@@ -111,67 +115,27 @@
       text-decoration: underline;
     }
 
-    /* ===== Corner logos styling ===== */
+    /* =====================
+       Corner Logo Styling
+    ======================*/
     .corner-img {
       position: absolute;
       z-index: 0;
       opacity: 0.95;
     }
 
+    /* Top-left image */
     .top-left { top: 10px; left: 10px; height: 40px; }
+    /* Top-right image */
     .top-right { top: 10px; right: 10px; height: 60px; }
+    /* Bottom-left image */
     .bottom-left { bottom: 10px; left: 10px; height: 40px; }
+    /* Bottom-right image */
     .bottom-right { bottom: 10px; right: 10px; height: 60px; }
 
-    /* ===== 2FA form-specific styles ===== */
-    .form-label {
-      display: block;
-      font-size: 16px;
-      color: white;
-      margin-bottom: 12px;
-      font-weight: 400;
-    }
-
-    .subtitle {
-      text-align: center;
-      font-size: 16px;
-      color: #cccccc;
-      margin-bottom: 30px;
-      font-weight: 300;
-    }
-
-    /* Verification code input fields */
-    .code-container {
-      display: flex;
-      gap: 10px;
-      justify-content: center;
-      margin: 12px 0;
-    }
-
-    .code-input {
-      width: 60px;
-      height: 60px;
-      background: #f9f9f9;
-      border: 1px solid #ccc;
-      border-radius: 8px;
-      text-align: center;
-      font-size: 20px;
-      font-weight: bold;
-      color: #333;
-    }
-
-    .code-input:focus {
-      outline: 2px solid #04AA6D;
-      background: #ffffff;
-    }
-
-    /* ===== Hide/show forms (controlled by JS) ===== */
-    .form-container { display: none; }
-    .form-container.active { display: block; }
-
-    /* ===== Success message after signup ===== */
-    .success-message {
-      background-color: #04AA6D;
+    /* Error message styling */
+    .error-message {
+      background-color: #dc3545;
       color: white;
       padding: 15px;
       border-radius: 8px;
@@ -179,7 +143,30 @@
       margin-bottom: 20px;
     }
 
-    /* ===== Password strength indicator ===== */
+    /* Success message styling */
+    .success-message {
+      background-color: #28a745;
+      color: white;
+      padding: 15px;
+      border-radius: 8px;
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    /* Show password checkbox styling */
+    .checkbox-container {
+      margin-top: 8px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .checkbox-container label {
+      color: white;
+      font-size: 14px;
+    }
+
+    /* Password strength indicator */
     .password-strength {
       margin-top: 5px;
       font-size: 12px;
@@ -187,154 +174,90 @@
     .strength-weak { color: #ff4444; }
     .strength-medium { color: #ffaa00; }
     .strength-strong { color: #00aa44; }
+
+    /* Loading spinner */
+    .spinner {
+      border: 3px solid #f3f3f3;
+      border-top: 3px solid #04AA6D;
+      border-radius: 50%;
+      width: 20px;
+      height: 20px;
+      animation: spin 1s linear infinite;
+      display: inline-block;
+      margin-right: 10px;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
   </style>
 </head>
 
 <body>
-  <!-- ===== Corner logos ===== -->
+  <!-- Four corner logos -->
   <img src="Smart Track.png" alt="Top Left Logo" class="corner-img top-left">
   <img src="Swadam.png" alt="Top Right Logo" class="corner-img top-right">
   <img src="Smart Track.png" alt="Bottom Left Logo" class="corner-img bottom-left">
   <img src="Swadam.png" alt="Bottom Right Logo" class="corner-img bottom-right">
 
-  <!-- ===== Main card container ===== -->
+  <!-- Main signup card -->
   <div class="card">
-    
-    <!-- ===== Signup Form ===== -->
-    <div id="signupForm" class="form-container active">
-      <h2>Create Your Account</h2>
-      <form onsubmit="handleSignup(event)">
-        <input type="text" name="fullname" placeholder="Full Name" required>
-        <input type="email" name="email" placeholder="Email" required>
-        <input type="password" name="password" id="signupPassword" placeholder="Password" required 
-               oninput="checkPasswordStrength(this.value)">
-        
-        <!-- Password strength feedback -->
-        <div id="passwordStrength" class="password-strength"></div>
-        
-        <!-- Show password toggle -->
-        <div class="checkbox-container">
-          <input type="checkbox" id="toggleSignupPassword" onchange="togglePassword('signupPassword', this)">
-          <label for="toggleSignupPassword">Show Password</label>
-        </div>
+    <h2>Create Your Account</h2>
 
-        <!-- Submit button -->
-        <button type="submit" id="signupBtn">Sign Up</button>
-      </form>
+    <div id="signupError" class="error-message" style="display: none;"></div>
+    <div id="signupSuccess" class="success-message" style="display: none;"></div>
 
-      <div class="auth-link">
-        Already have an account? <a href="auth.html">Log In</a>
-      </div>
-    </div>
-
-    <!-- ===== 2FA Verification Form ===== -->
-    <div id="twoFactorForm" class="form-container">
-      <h2>Email Verification</h2>
-      <p class="subtitle">We've sent a verification code to your email</p>
-
-      <form onsubmit="handle2FA(event)">
-        <!-- Display user email (readonly) -->
-        <div>
-          <label class="form-label">Your Email:</label>
-          <input type="email" id="twoFactorEmail" class="email-input" readonly>
-        </div>
-
-        <!-- 5-digit code input fields -->
-        <div>
-          <label class="form-label">Enter Verification Code:</label>
-          <div class="code-container">
-            <input type="text" class="code-input" maxlength="1" oninput="moveToNext(this, 0)">
-            <input type="text" class="code-input" maxlength="1" oninput="moveToNext(this, 1)">
-            <input type="text" class="code-input" maxlength="1" oninput="moveToNext(this, 2)">
-            <input type="text" class="code-input" maxlength="1" oninput="moveToNext(this, 3)">
-            <input type="text" class="code-input" maxlength="1" oninput="moveToNext(this, 4)">
-          </div>
-        </div>
-
-        <button type="submit">Verify Account</button>
-      </form>
-
-      <!-- Links: go back to signup / resend code -->
-      <div class="auth-link">
-        <a href="#" onclick="showSignup()">← Back to Sign Up</a> | 
-        <a href="#" onclick="resendCode()">Resend Code</a>
-      </div>
-    </div>
-
-    <!-- ===== Success Confirmation Screen ===== -->
-    <div id="successForm" class="form-container">
-      <div class="success-message">
-        <h2 style="color: white; margin: 0;">Account Created Successfully!</h2>
-        <p style="margin: 10px 0 0 0;">Welcome to Smart Track! Redirecting to Homepage...</p>
-      </div>
+    <form id="signupForm" onsubmit="handleSignup(event)">
+      <!-- Username field -->
+      <input type="text" id="username" name="username" placeholder="Choose a username" required>
       
-      <button onclick="redirectToDashboard()">Go to Homepage</button>
-    </div>
+      <!-- Email field (optional for display, but not used in logic) -->
+      <input type="email" name="email" placeholder="Email (optional)" >
 
+      <!-- Password field -->
+      <input type="password" name="password" id="signupPassword" placeholder="Choose a password" required 
+             oninput="checkPasswordStrength(this.value)">
+      
+      <!-- Password strength feedback -->
+      <div id="passwordStrength" class="password-strength"></div>
+      
+      <!-- Show Password checkbox -->
+      <div class="checkbox-container">
+        <input type="checkbox" id="toggleSignupPassword" onchange="togglePasswordVisibility()">
+        <label for="toggleSignupPassword">Show Password</label>
+      </div>
+
+      <!-- Signup button -->
+      <button type="submit" id="signupButton">Sign Up</button>
+    </form>
+
+    <!-- Link to login -->
+    <div class="auth-link">
+      Already have an account? <a href="#" onclick="showLoginDemo()">Log In</a>
+    </div>
   </div>
 
   <script>
-    // Store current user's email & name
-    let currentUserEmail = '';
-    let currentUserName = '';
-
-    /* ===== Form switching functions ===== */
-    function showSignup() {
-      hideAllForms();
-      document.getElementById('signupForm').classList.add('active');
-    }
-
-    function show2FA(email, name) {
-      currentUserEmail = email;
-      currentUserName = name;
-      document.getElementById('twoFactorEmail').value = email;
-      hideAllForms();
-      document.getElementById('twoFactorForm').classList.add('active');
-      
-      // Focus first input box automatically
-      setTimeout(() => {
-        document.querySelector('.code-input').focus();
-      }, 100);
-    }
-
-    function showSuccess() {
-      hideAllForms();
-      document.getElementById('successForm').classList.add('active');
-      
-      // Redirect after 1 second
-      setTimeout(() => {
-        redirectToDashboard();
-      }, 1000);
-    }
-
-    function redirectToDashboard() {
-      // Example: store user info (in real apps use secure sessions)
-      // localStorage.setItem('userEmail', currentUserEmail);
-      // localStorage.setItem('userName', currentUserName);
-      
-      // Redirect to homepage
-      window.location.href = 'homepage.html';
-    }
-
-    function hideAllForms() {
-      document.querySelectorAll('.form-container').forEach(form => {
-        form.classList.remove('active');
-      });
-    }
-
-    /* ===== Password visibility toggle ===== */
-    function togglePassword(passwordFieldId, checkbox) {
-      const passwordField = document.getElementById(passwordFieldId);
+    /* =====================
+       Password Visibility Toggle
+    ======================*/
+    function togglePasswordVisibility() {
+      const passwordField = document.getElementById('signupPassword');
+      const checkbox = document.getElementById('toggleSignupPassword');
       passwordField.type = checkbox.checked ? 'text' : 'password';
     }
 
-    /* ===== Password strength check ===== */
+    /* =====================
+       Password Strength Check
+    ======================*/
     function checkPasswordStrength(password) {
       const strengthDiv = document.getElementById('passwordStrength');
-      const signupBtn = document.getElementById('signupBtn');
+      const signupBtn = document.getElementById('signupButton');
       
       if (password.length === 0) {
         strengthDiv.textContent = '';
+        signupBtn.disabled = false;
         return;
       }
       
@@ -364,101 +287,115 @@
       }
     }
 
-    /* ===== Signup form handler ===== */
+    /* =====================
+       Signup Handler with Integrated Logic
+    ======================*/
     function handleSignup(event) {
-      event.preventDefault();
+      event.preventDefault(); // Prevent page reload
       
-      const formData = new FormData(event.target);
-      const email = formData.get('email');
-      const fullname = formData.get('fullname');
-      const password = formData.get('password');
+      const username = document.getElementById('username').value;
+      const password = document.getElementById('signupPassword').value;
+      const email = document.querySelector('input[name="email"]').value;
       
       // Basic validation
-      if (!email || !fullname || !password) {
-        alert('Please fill in all fields');
+      if (!username || !password) {
+        showErrorMessage('signupError', 'Please fill in username and password');
         return;
       }
+      
       if (password.length < 8) {
-        alert('Password must be at least 8 characters long');
+        showErrorMessage('signupError', 'Password must be at least 8 characters long');
         return;
       }
       
       // Simulate loading state
-      const button = event.target.querySelector('button');
-      const originalText = button.textContent;
-      button.textContent = 'Creating Account...';
-      button.disabled = true;
+      const button = document.getElementById('signupButton');
+      setButtonLoading(button, 'Creating Account...');
       
-      // Fake server response delay
+      // Process signup with integrated logic
       setTimeout(() => {
-        show2FA(email, fullname);  // Move to 2FA step
-        button.textContent = originalText;
-        button.disabled = false;
-        
-        // Reset form & clear strength text
-        event.target.reset();
-        document.getElementById('passwordStrength').textContent = '';
+        const users = JSON.parse(localStorage.getItem("users")) || [];
+
+        // Check if username already exists
+        if (users.find(u => u.username === username)) {
+          showErrorMessage('signupError', 'Username already exists. Please choose another.');
+          resetButtonState(button, 'Sign Up');
+        } else {
+          // Add new user
+          users.push({ username, password });
+          localStorage.setItem("users", JSON.stringify(users));
+          
+          // Store user data for potential 2FA
+          sessionStorage.setItem('userEmail', email || username + '@example.com');
+          sessionStorage.setItem('userFullName', username);
+          sessionStorage.setItem('authType', 'signup');
+          
+          showSuccessMessage('signupSuccess', 'Account created successfully! Redirecting to login...');
+          
+          // Redirect to login after success
+          setTimeout(() => {
+            window.location.href = 'login.html';
+          }, 1000);
+        }
+      }, 1000);
+    }
+
+    /* =====================
+       Demo Login Function
+    ======================*/
+    function showLoginDemo() {
+      window.location.href = 'login.html';
+    }
+
+    /* =====================
+       Utility Functions
+    ======================*/
+    function setButtonLoading(button, text) {
+      button.innerHTML = `<span class="spinner"></span>${text}`;
+      button.disabled = true;
+    }
+
+    function resetButtonState(button, text) {
+      button.innerHTML = text;
+      button.disabled = false;
+    }
+
+    function showErrorMessage(elementId, message) {
+      const errorDiv = document.getElementById(elementId);
+      const successDiv = document.getElementById('signupSuccess');
+      
+      // Hide success message if showing
+      successDiv.style.display = 'none';
+      
+      errorDiv.textContent = message;
+      errorDiv.style.display = 'block';
+      setTimeout(() => {
+        errorDiv.style.display = 'none';
       }, 2000);
     }
 
-    /* ===== Verification code input navigation ===== */
-    function moveToNext(current, index) {
-      const inputs = document.querySelectorAll('.code-input');
+    function showSuccessMessage(elementId, message) {
+      const successDiv = document.getElementById(elementId);
+      const errorDiv = document.getElementById('signupError');
       
-      // Auto move to next input when filled
-      if (current.value.length === 1 && index < inputs.length - 1) {
-        inputs[index + 1].focus();
-      }
+      // Hide error message if showing
+      errorDiv.style.display = 'none';
       
-      // Handle backspace (move back)
-      current.addEventListener('keydown', function(e) {
-        if (e.key === 'Backspace' && current.value === '' && index > 0) {
-          inputs[index - 1].focus();
-        }
-      });
+      successDiv.textContent = message;
+      successDiv.style.display = 'block';
     }
 
-    /* ===== 2FA form handler ===== */
-    function handle2FA(event) {
-      event.preventDefault();
-      
-      const codeInputs = document.querySelectorAll('.code-input');
-      const code = Array.from(codeInputs).map(input => input.value).join('');
-      
-      if (code.length !== 5) {
-        alert('Please enter the complete 5-digit verification code');
-        return;
-      }
-      
-      const button = event.target.querySelector('button');
-      button.textContent = 'Verifying...';
-      button.disabled = true;
-      
-      // Fake verification delay
-      setTimeout(() => {
-        showSuccess();  // Success after verification
-        button.textContent = 'Verify Account';
-        button.disabled = false;
-        
-        // Reset inputs
-        codeInputs.forEach(input => input.value = '');
-      }, 1500);
+    function resetSignupForm() {
+      document.getElementById('signupForm').reset();
+      document.getElementById('signupButton').innerHTML = 'Sign Up';
+      document.getElementById('signupButton').disabled = false;
+      document.getElementById('signupSuccess').style.display = 'none';
+      document.getElementById('signupError').style.display = 'none';
+      document.getElementById('passwordStrength').textContent = '';
     }
 
-    /* ===== Resend code function ===== */
-    function resendCode() {
-      alert('Verification code has been resent to ' + currentUserEmail);
-      // In real apps, send a new code from backend
-    }
-
-    /* ===== Restrict code inputs to numbers only ===== */
-    document.addEventListener('DOMContentLoaded', function() {
-      document.querySelectorAll('.code-input').forEach(input => {
-        input.addEventListener('input', function() {
-          this.value = this.value.replace(/[^0-9]/g, '');
-        });
-      });
-    });
+    // Add debug helper
+    window.viewUsers = viewStoredUsers;
   </script>
 </body>
 </html>
