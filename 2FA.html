@@ -2,24 +2,21 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Smart Track - Authentication</title>
+  <title>Smart Track - 2FA Verification</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  
+
   <style>
-    /* Base styling */
     body {
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
       margin: 0;
       padding: 0;
-      background-color: #000000;
+      background-color: #000;
       display: flex;
       align-items: center;
       justify-content: center;
       height: 100vh;
-      color: white;
     }
 
-    /* Form card styling */
     .card {
       background-color: #161616;
       padding: 50px;
@@ -27,36 +24,47 @@
       width: 100%;
       max-width: 400px;
       box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
-      z-index: 1;
       position: relative;
-      transition: all 0.3s ease;
+      z-index: 1;
     }
 
     h2 {
       text-align: center;
       color: #706a6a;
+      margin-bottom: 20px;
+    }
+
+    .subtitle {
+      text-align: center;
+      font-size: 16px;
+      color: #ccc;
       margin-bottom: 30px;
     }
 
-    /* Input fields */
-    input[type="text"], input[type="email"], input[type="password"] {
-      width: 100%;
-      padding: 12px;
-      margin: 12px 0;
-      border: 1px solid #ccc;
-      border-radius: 8px;
-      background: #f9f9f9;
-      font-size: 16px;
-      box-sizing: border-box;
+    .code-container {
+      display: flex;
+      gap: 10px;
+      justify-content: center;
+      margin: 20px 0;
     }
 
-    input:focus {
-      border-color: #04AA6D;
-      outline: none;
+    .code-input {
+      width: 50px;
+      height: 50px;
+      background: #f9f9f9;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      text-align: center;
+      font-size: 20px;
+      font-weight: bold;
+      color: #333;
+    }
+
+    .code-input:focus {
+      outline: 2px solid #04AA6D;
       background: #fff;
     }
 
-    /* Button styling */
     button {
       width: 100%;
       background-color: #04AA6D;
@@ -70,375 +78,155 @@
       transition: background-color 0.3s ease;
     }
 
-    button:hover {
-      background-color: #039e64;
-    }
+    button:hover { background-color: #039e64; }
+    button:disabled { background-color: #666; cursor: not-allowed; }
 
-    button:disabled {
-      background-color: #666;
-      cursor: not-allowed;
-    }
-
-    /* Show password checkbox */
-    .checkbox-container {
-      margin-top: 8px;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-
-    .checkbox-container label {
-      color: white;
-      font-size: 14px;
-    }
-
-    /* Link styling */
-    .auth-link {
-      text-align: center;
-      margin-top: 20px;
-      font-size: 14px;
-      color: #666;
-    }
-
-    .auth-link a {
-      color: dodgerblue;
-      text-decoration: none;
-    }
-
-    .auth-link a:hover {
-      text-decoration: underline;
-    }
-
-    /* Corner logos */
-    .corner-img {
-      position: absolute;
-      z-index: 0;
-      opacity: 0.95;
-    }
-
-    .top-left {
-      top: 10px;
-      left: 10px;
-      height: 40px;
-    }
-
-    .top-right {
-      top: 10px;
-      right: 10px;
-      height: 60px;
-    }
-
-    .bottom-left {
-      bottom: 10px;
-      left: 10px;
-      height: 40px;
-    }
-
-    .bottom-right {
-      bottom: 10px;
-      right: 10px;
-      height: 60px;
-    }
-
-    /* 2FA specific styles */
-    .form-label {
-      display: block;
-      font-size: 16px;
-      color: white;
-      margin-bottom: 12px;
-      font-weight: 400;
-    }
-
-    .subtitle {
-      text-align: center;
-      font-size: 16px;
-      color: #cccccc;
-      margin-bottom: 30px;
-      font-weight: 300;
-    }
-
-    .code-container {
-      display: flex;
-      gap: 10px;
-      justify-content: center;
-      margin: 12px 0;
-    }
-
-    .code-input {
-      width: 60px;
-      height: 60px;
-      background: #f9f9f9;
-      border: 1px solid #ccc;
-      border-radius: 8px;
-      text-align: center;
-      font-size: 20px;
-      font-weight: bold;
-      color: #333;
-    }
-
-    .code-input:focus {
-      outline: 2px solid #04AA6D;
-      background: #ffffff;
-    }
-
-    /* Hide/show forms */
-    .form-container {
-      display: none;
-    }
-
-    .form-container.active {
-      display: block;
-    }
-
-    /* Success message */
-    .success-message {
-      background-color: #04AA6D;
+    .error-message {
+      background-color: #dc3545;
       color: white;
       padding: 15px;
       border-radius: 8px;
       text-align: center;
       margin-bottom: 20px;
+      display: none;
     }
+
+    .spinner {
+      border: 3px solid #f3f3f3;
+      border-top: 3px solid #04AA6D;
+      border-radius: 50%;
+      width: 20px;
+      height: 20px;
+      animation: spin 1s linear infinite;
+      display: inline-block;
+      margin-right: 10px;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    /* Corner Logos */
+    .corner-img {
+      position: absolute;
+      z-index: 0;
+      opacity: 0.95;
+    }
+    .top-left { top: 10px; left: 10px; height: 40px; }
+    .top-right { top: 10px; right: 10px; height: 60px; }
+    .bottom-left { bottom: 10px; left: 10px; height: 40px; }
+    .bottom-right { bottom: 10px; right: 10px; height: 60px; }
   </style>
 </head>
 
 <body>
-  <!-- Corner logos -->
-  <img src="Smart Track.png" alt="Top Left Logo" class="corner-img top-left">
-  <img src="Swadam.png" alt="Top Right Logo" class="corner-img top-right">
-  <img src="Smart Track.png" alt="Bottom Left Logo" class="corner-img bottom-left">
-  <img src="Swadam.png" alt="Bottom Right Logo" class="corner-img bottom-right">
+  <!-- Corner Branding -->
+  <img src="Smart Track.png" class="corner-img top-left" alt="">
+  <img src="Swadam.png" class="corner-img top-right" alt="">
+  <img src="Smart Track.png" class="corner-img bottom-left" alt="">
+  <img src="Swadam.png" class="corner-img bottom-right" alt="">
 
-  <!-- Main card container -->
   <div class="card">
-    
-    <!-- Login Form -->
-    <div id="loginForm" class="form-container active">
-      <h2>Smart Track Login</h2>
-      <form onsubmit="handleLogin(event)">
-        <input type="email" name="email" placeholder="Email" required>
-        <input type="password" name="password" id="loginPassword" placeholder="Password" required>
-        
-        <div class="checkbox-container">
-          <input type="checkbox" id="toggleLoginPassword" onchange="togglePassword('loginPassword', this)">
-          <label for="toggleLoginPassword">Show Password</label>
-        </div>
+    <h2>Email Verification</h2>
+    <p class="subtitle">Enter the 6-digit code sent to your email</p>
 
-        <button type="submit">Log In</button>
-      </form>
+    <div id="twoFactorError" class="error-message"></div>
 
-      <div class="auth-link">
-        Don't have an account? <a href="#" onclick="showSignup()">Sign Up</a>
+    <form onsubmit="handle2FA(event)">
+      <div class="code-container">
+        <input type="text" class="code-input" maxlength="1" oninput="moveToNext(this, 0)" onkeydown="handleKeydown(this, 0)">
+        <input type="text" class="code-input" maxlength="1" oninput="moveToNext(this, 1)" onkeydown="handleKeydown(this, 1)">
+        <input type="text" class="code-input" maxlength="1" oninput="moveToNext(this, 2)" onkeydown="handleKeydown(this, 2)">
+        <input type="text" class="code-input" maxlength="1" oninput="moveToNext(this, 3)" onkeydown="handleKeydown(this, 3)">
+        <input type="text" class="code-input" maxlength="1" oninput="moveToNext(this, 4)" onkeydown="handleKeydown(this, 4)">
+        <input type="text" class="code-input" maxlength="1" oninput="moveToNext(this, 5)" onkeydown="handleKeydown(this, 5)">
       </div>
-    </div>
 
-    <!-- Signup Form -->
-    <div id="signupForm" class="form-container">
-      <h2>Create Your Account</h2>
-      <form onsubmit="handleSignup(event)">
-        <input type="text" name="fullname" placeholder="Full Name" required>
-        <input type="email" name="email" placeholder="Email" required>
-        <input type="password" name="password" id="signupPassword" placeholder="Password" required>
-        
-        <div class="checkbox-container">
-          <input type="checkbox" id="toggleSignupPassword" onchange="togglePassword('signupPassword', this)">
-          <label for="toggleSignupPassword">Show Password</label>
-        </div>
-
-        <button type="submit">Sign Up</button>
-      </form>
-
-      <div class="auth-link">
-        Already have an account? <a href="#" onclick="showLogin()">Log In</a>
-      </div>
-    </div>
-
-    <!-- 2FA Form -->
-    <div id="twoFactorForm" class="form-container">
-      <h2>Two Factor Authentication</h2>
-      <p class="subtitle">Enter the code sent to your email</p>
-
-      <form onsubmit="handle2FA(event)">
-        <div>
-          <label class="form-label">Your Email:</label>
-          <input type="email" id="twoFactorEmail" class="email-input" readonly>
-        </div>
-
-        <div>
-          <label class="form-label">Enter Code:</label>
-          <div class="code-container">
-            <input type="text" class="code-input" maxlength="1" oninput="moveToNext(this, 0)">
-            <input type="text" class="code-input" maxlength="1" oninput="moveToNext(this, 1)">
-            <input type="text" class="code-input" maxlength="1" oninput="moveToNext(this, 2)">
-            <input type="text" class="code-input" maxlength="1" oninput="moveToNext(this, 3)">
-            <input type="text" class="code-input" maxlength="1" oninput="moveToNext(this, 4)">
-          </div>
-        </div>
-
-        <button type="submit">Verify Code</button>
-      </form>
-
-      <div class="auth-link">
-        <a href="#" onclick="showLogin()">← Back to Login</a>
-      </div>
-    </div>
-
-    <!-- Success Form -->
-    <div id="successForm" class="form-container">
-      <div class="success-message">
-        <h2 style="color: white; margin: 0;">Welcome to Smart Track!</h2>
-        <p style="margin: 10px 0 0 0;">Authentication successful. You are now logged in.</p>
-      </div>
-      
-      <button onclick="showLogin()">Login Again</button>
-    </div>
-
+      <button type="submit" id="verifyButton">Verify Code</button>
+    </form>
   </div>
 
   <script>
-    let currentUserEmail = '';
-
-    // Form switching functions
-    function showLogin() {
-      hideAllForms();
-      document.getElementById('loginForm').classList.add('active');
+    // Initialize attempts if not already set
+    if (!sessionStorage.getItem("attemptsLeft")) {
+      sessionStorage.setItem("attemptsLeft", 3);
     }
 
-    function showSignup() {
-      hideAllForms();
-      document.getElementById('signupForm').classList.add('active');
+    function getVerificationCode() {
+      let code = "";
+      document.querySelectorAll(".code-input").forEach(i => code += i.value);
+      return code;
     }
 
-    function show2FA(email) {
-      currentUserEmail = email;
-      document.getElementById('twoFactorEmail').value = email;
-      hideAllForms();
-      document.getElementById('twoFactorForm').classList.add('active');
-      
-      // Focus first code input
-      setTimeout(() => {
-        document.querySelector('.code-input').focus();
-      }, 100);
-    }
-
-    function showSuccess() {
-      hideAllForms();
-      document.getElementById('successForm').classList.add('active');
-    }
-
-    function hideAllForms() {
-      document.querySelectorAll('.form-container').forEach(form => {
-        form.classList.remove('active');
-      });
-    }
-
-    // Password toggle function
-    function togglePassword(passwordFieldId, checkbox) {
-      const passwordField = document.getElementById(passwordFieldId);
-      passwordField.type = checkbox.checked ? 'text' : 'password';
-    }
-
-    // Login handler
-    function handleLogin(event) {
-      event.preventDefault();
-      
-      const formData = new FormData(event.target);
-      const email = formData.get('email');
-      const password = formData.get('password');
-      
-      // Simulate login validation
-      const button = event.target.querySelector('button');
-      button.textContent = 'Logging in...';
-      button.disabled = true;
-      
-      setTimeout(() => {
-        // Simulate successful login - trigger 2FA
-        show2FA(email);
-        button.textContent = 'Log In';
-        button.disabled = false;
-        
-        // Reset form
-        event.target.reset();
-      }, 1000);
-    }
-
-    // Signup handler
-    function handleSignup(event) {
-      event.preventDefault();
-      
-      const formData = new FormData(event.target);
-      const email = formData.get('email');
-      const fullname = formData.get('fullname');
-      const password = formData.get('password');
-      
-      // Simulate signup validation
-      const button = event.target.querySelector('button');
-      button.textContent = 'Creating Account...';
-      button.disabled = true;
-      
-      setTimeout(() => {
-        // Simulate successful signup - trigger 2FA
-        show2FA(email);
-        button.textContent = 'Sign Up';
-        button.disabled = false;
-        
-        // Reset form
-        event.target.reset();
-      }, 1000);
-    }
-
-    // 2FA code input navigation
-    function moveToNext(current, index) {
-      const inputs = document.querySelectorAll('.code-input');
-      
-      // Auto-move to next input
-      if (current.value.length === 1 && index < inputs.length - 1) {
-        inputs[index + 1].focus();
+    function moveToNext(input, index) {
+      if (input.value.length === 1) {
+        const next = document.querySelectorAll(".code-input")[index + 1];
+        if (next) next.focus();
       }
-      
-      // Handle backspace
-      current.addEventListener('keydown', function(e) {
-        if (e.key === 'Backspace' && current.value === '' && index > 0) {
-          inputs[index - 1].focus();
-        }
-      });
     }
 
-    // 2FA handler
-    function handle2FA(event) {
-      event.preventDefault();
-      
-      const codeInputs = document.querySelectorAll('.code-input');
-      const code = Array.from(codeInputs).map(input => input.value).join('');
-      
-      if (code.length !== 5) {
-        alert('Please enter the complete 5-digit code');
+    function handleKeydown(input, index) {
+      // Allow backspace, delete, tab, arrow keys, and other navigation keys
+      if (['Backspace', 'Delete', 'Tab', 'ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown'].includes(event.key)) {
+        if (event.key === 'Backspace' && input.value === '') {
+          const prev = document.querySelectorAll(".code-input")[index - 1];
+          if (prev) prev.focus();
+        }
         return;
       }
       
-      const button = event.target.querySelector('button');
-      button.textContent = 'Verifying...';
-      button.disabled = true;
-      
-      setTimeout(() => {
-        // Simulate successful 2FA verification
-        showSuccess();
-        button.textContent = 'Verify Code';
-        button.disabled = false;
-        
-        // Reset code inputs
-        codeInputs.forEach(input => input.value = '');
-      }, 1500);
+      // Only allow numbers 0-9
+      if (!/^[0-9]$/.test(event.key)) {
+        event.preventDefault();
+      }
     }
 
-    // Restrict code inputs to numbers only
-    document.addEventListener('DOMContentLoaded', function() {
-      document.querySelectorAll('.code-input').forEach(input => {
-        input.addEventListener('input', function(e) {
-          this.value = this.value.replace(/[^0-9]/g, '');
-        });
-      });
-    });
+    function showError(msg) {
+      const err = document.getElementById("twoFactorError");
+      err.textContent = msg;
+      err.style.display = "block";
+    }
+
+    async function handle2FA(event) {
+      event.preventDefault();
+      const button = document.getElementById("verifyButton");
+      const code = getVerificationCode();
+
+      if (code.length !== 6) {
+        showError("Please enter all 6 digits");
+        return;
+      }
+
+      // Show loading
+      button.innerHTML = '<span class="spinner"></span>Verifying...';
+      button.disabled = true;
+
+      await new Promise(r => setTimeout(r)); 
+
+      let attempts = parseInt(sessionStorage.getItem("attemptsLeft"));
+
+      if (code === "123456") {
+        // Success
+        sessionStorage.removeItem("attemptsLeft");
+        localStorage.setItem("authToken", "demo-token-" + Date.now());
+        window.location.href = "Homepage.html";
+      } else {
+        attempts -= 1;
+        sessionStorage.setItem("attemptsLeft", attempts);
+
+        if (attempts > 0) {
+          showError(`Invalid code. Attempts left: ${attempts}`);
+        } else {
+          alert("Too many failed attempts! Please log in again.");
+          sessionStorage.clear();
+          window.location.href = "login.html";
+        }
+      }
+
+      button.innerHTML = "Verify Code";
+      button.disabled = false;
+    }
   </script>
 </body>
 </html>
