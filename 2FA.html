@@ -2,8 +2,11 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Smart Track - 2FA Verification</title>
+  <title>Smart Track - Email Verification</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <!-- EmailJS Library -->
+  <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
 
   <style>
     body {
@@ -22,7 +25,7 @@
       padding: 50px;
       border-radius: 12px;
       width: 100%;
-      max-width: 400px;
+      max-width: 450px;
       box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
       position: relative;
       z-index: 1;
@@ -39,6 +42,16 @@
       font-size: 16px;
       color: #ccc;
       margin-bottom: 30px;
+    }
+
+    .email-display {
+      text-align: center;
+      background-color: #2a2a2a;
+      padding: 10px;
+      border-radius: 8px;
+      margin-bottom: 20px;
+      color: #04AA6D;
+      font-weight: bold;
     }
 
     .code-container {
@@ -91,6 +104,37 @@
       display: none;
     }
 
+    .success-message {
+      background-color: #28a745;
+      color: white;
+      padding: 15px;
+      border-radius: 8px;
+      text-align: center;
+      margin-bottom: 20px;
+      display: none;
+    }
+
+    .resend-container {
+      text-align: center;
+      margin-top: 20px;
+    }
+
+    .resend-link {
+      color: #04AA6D;
+      text-decoration: none;
+      cursor: pointer;
+    }
+
+    .resend-link:hover {
+      text-decoration: underline;
+    }
+
+    .resend-link.disabled {
+      color: #666;
+      cursor: not-allowed;
+      text-decoration: none;
+    }
+
     .spinner {
       border: 3px solid #f3f3f3;
       border-top: 3px solid #04AA6D;
@@ -117,6 +161,16 @@
     .top-right { top: 10px; right: 10px; height: 60px; }
     .bottom-left { bottom: 10px; left: 10px; height: 40px; }
     .bottom-right { bottom: 10px; right: 10px; height: 60px; }
+
+    .attempts-warning {
+      background-color: #ff6b35;
+      color: white;
+      padding: 10px;
+      border-radius: 8px;
+      text-align: center;
+      margin-bottom: 15px;
+      font-size: 14px;
+    }
   </style>
 </head>
 
@@ -130,8 +184,12 @@
   <div class="card">
     <h2>Email Verification</h2>
     <p class="subtitle">Enter the 6-digit code sent to your email</p>
+    
+    <div class="email-display" id="emailDisplay"></div>
 
+    <div id="attemptsWarning" class="attempts-warning" style="display: none;"></div>
     <div id="twoFactorError" class="error-message"></div>
+    <div id="twoFactorSuccess" class="success-message"></div>
 
     <form onsubmit="handle2FA(event)">
       <div class="code-container">
@@ -145,12 +203,82 @@
 
       <button type="submit" id="verifyButton">Verify Code</button>
     </form>
+
+    <div class="resend-container">
+      <span>Didn't receive the code? </span>
+      <a href="#" class="resend-link" id="resendLink" onclick="resendCode()">Resend Code</a>
+      <span id="resendTimer" style="color: #666; display: none;"></span>
+      
+      <!-- Debugging button - remove this after testing -->
+      <br><br>
+      <button type="button" onclick="testEmailSending()" style="background-color: #dc3545; font-size: 12px; padding: 8px;">
+        🔧 Test Email (Debug)
+      </button>
+    </div>
   </div>
 
   <script>
-    // Initialize attempts if not already set
-    if (!sessionStorage.getItem("attemptsLeft")) {
-      sessionStorage.setItem("attemptsLeft", 3);
+    // Initialize EmailJS with your configured public key
+    emailjs.init("nEOog_PJ9r2Y4bStM");
+
+    // In-memory storage
+    window.pendingVerifications = window.pendingVerifications || {};
+    window.demoUsers = window.demoUsers || [];
+
+    let attemptsLeft = 3;
+    let resendCooldown = 60; // 60 seconds cooldown
+    let resendTimer = null;
+
+    // Initialize page
+    window.onload = function() {
+      const email = sessionStorage.getItem('userEmail');
+      const authType = sessionStorage.getItem('authType');
+      
+      if (!email) {
+        alert('No email found. Please login or signup again.');
+        window.location.href = 'login.html';
+        return;
+      }
+      
+      // Display email (masked for privacy)
+      document.getElementById('emailDisplay').textContent = maskEmail(email);
+      
+      // Generate and send initial verification code
+      const verificationCode = generateVerificationCode();
+      sessionStorage.setItem('verificationCode', verificationCode);
+      
+      // Send the initial verification email
+      const username = sessionStorage.getItem('userFullName') || sessionStorage.getItem('pendingUser') || 'User';
+      sendVerificationEmail(email, username, verificationCode)
+        .then(success => {
+          if (success) {
+            console.log('Initial verification email sent successfully');
+            showSuccess('Verification code sent to your email!');
+          } else {
+            console.log('Email sending failed, showing demo code');
+            showSuccess(`Demo mode: Your verification code is ${verificationCode}`);
+          }
+        })
+        .catch(error => {
+          console.error('Error sending initial email:', error);
+          showSuccess(`Demo mode: Your verification code is ${verificationCode}`);
+        });
+      
+      // Focus first input
+      document.querySelector('.code-input').focus();
+    };
+
+    function maskEmail(email) {
+      const parts = email.split('@');
+      const username = parts[0];
+      const domain = parts[1];
+      
+      if (username.length <= 2) {
+        return email;
+      }
+      
+      const masked = username[0] + '*'.repeat(username.length - 2) + username[username.length - 1];
+      return masked + '@' + domain;
     }
 
     function getVerificationCode() {
@@ -167,16 +295,17 @@
     }
 
     function handleKeydown(input, index) {
-      // Allow backspace, delete, tab, arrow keys, and other navigation keys
       if (['Backspace', 'Delete', 'Tab', 'ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown'].includes(event.key)) {
         if (event.key === 'Backspace' && input.value === '') {
           const prev = document.querySelectorAll(".code-input")[index - 1];
-          if (prev) prev.focus();
+          if (prev) {
+            prev.focus();
+            prev.select();
+          }
         }
         return;
       }
       
-      // Only allow numbers 0-9
       if (!/^[0-9]$/.test(event.key)) {
         event.preventDefault();
       }
@@ -186,12 +315,36 @@
       const err = document.getElementById("twoFactorError");
       err.textContent = msg;
       err.style.display = "block";
+      
+      // Hide after 5 seconds
+      setTimeout(() => {
+        err.style.display = "none";
+      }, 5000);
+    }
+
+    function showSuccess(msg) {
+      const success = document.getElementById("twoFactorSuccess");
+      success.textContent = msg;
+      success.style.display = "block";
+    }
+
+    function updateAttemptsWarning() {
+      const warning = document.getElementById("attemptsWarning");
+      if (attemptsLeft <= 1) {
+        warning.textContent = `⚠️ Warning: ${attemptsLeft} attempt remaining`;
+        warning.style.display = "block";
+      } else if (attemptsLeft <= 2) {
+        warning.textContent = `${attemptsLeft} attempts remaining`;
+        warning.style.display = "block";
+      }
     }
 
     async function handle2FA(event) {
       event.preventDefault();
       const button = document.getElementById("verifyButton");
       const code = getVerificationCode();
+      const email = sessionStorage.getItem('userEmail');
+      const authType = sessionStorage.getItem('authType');
 
       if (code.length !== 6) {
         showError("Please enter all 6 digits");
@@ -202,30 +355,193 @@
       button.innerHTML = '<span class="spinner"></span>Verifying...';
       button.disabled = true;
 
-      await new Promise(r => setTimeout(r)); 
+      await new Promise(r => setTimeout(r, 800));
 
-      let attempts = parseInt(sessionStorage.getItem("attemptsLeft"));
-
-      if (code === "123456") {
-        // Success
-        sessionStorage.removeItem("attemptsLeft");
-        localStorage.setItem("authToken", "demo-token-" + Date.now());
-        window.location.href = "Homepage.html";
+      // Get stored verification code
+      const storedCode = sessionStorage.getItem('verificationCode');
+      
+      if (code === storedCode) {
+        // Success - handle based on auth type
+        if (authType === 'signup') {
+          // Complete signup process
+          const verification = window.pendingVerifications[email];
+          if (verification && verification.isSignup) {
+            window.demoUsers.push({
+              username: verification.username,
+              password: verification.password,
+              email: email
+            });
+            delete window.pendingVerifications[email];
+          }
+        }
+        
+        // Set auth token and redirect
+        const authToken = 'demo-token-' + Date.now();
+        sessionStorage.setItem('authToken', authToken);
+        sessionStorage.setItem('currentUser', sessionStorage.getItem('pendingUser') || 'user');
+        
+        showSuccess('Verification successful! Redirecting...');
+        
+        setTimeout(() => {
+          // Clear sensitive data
+          sessionStorage.removeItem('verificationCode');
+          sessionStorage.removeItem('pendingUser');
+          window.location.href = "homepage.html";
+        }, 1500);
+        
       } else {
-        attempts -= 1;
-        sessionStorage.setItem("attemptsLeft", attempts);
+        attemptsLeft -= 1;
+        updateAttemptsWarning();
 
-        if (attempts > 0) {
-          showError(`Invalid code. Attempts left: ${attempts}`);
+        if (attemptsLeft > 0) {
+          showError(`Invalid code. ${attemptsLeft} attempts remaining.`);
+          // Clear inputs for retry
+          document.querySelectorAll('.code-input').forEach(input => {
+            input.value = '';
+          });
+          document.querySelector('.code-input').focus();
         } else {
-          alert("Too many failed attempts! Please log in again.");
-          sessionStorage.clear();
-          window.location.href = "login.html";
+          showError("Too many failed attempts!");
+          setTimeout(() => {
+            alert("Verification failed. Please try logging in again.");
+            sessionStorage.clear();
+            window.location.href = "login.html";
+          }, 2000);
         }
       }
 
       button.innerHTML = "Verify Code";
       button.disabled = false;
+    }
+
+    function generateVerificationCode() {
+      return Math.floor(100000 + Math.random() * 900000).toString();
+    }
+
+    async function sendVerificationEmail(email, username, code) {
+      console.log('Attempting to send email to:', email);
+      console.log('Using code:', code);
+      
+      const templateParams = {
+        to_email: email,
+        to_name: username,
+        verification_code: code,
+        app_name: 'Smart Track'
+      };
+
+      try {
+        // Using your configured Service ID and Template ID
+        console.log('Sending with EmailJS...');
+        const response = await emailjs.send('Smart_Track_Demo123', 'template_f2ezmje', templateParams);
+        console.log('Email sent successfully:', response);
+        return true;
+      } catch (error) {
+        console.error('Email sending failed:', error);
+        console.error('Error details:', error.text || error.message);
+        return false;
+      }
+    }
+
+    async function resendCode() {
+      const resendLink = document.getElementById('resendLink');
+      const email = sessionStorage.getItem('userEmail');
+      const username = sessionStorage.getItem('userFullName') || sessionStorage.getItem('pendingUser') || 'User';
+      
+      if (resendLink.classList.contains('disabled')) {
+        return;
+      }
+      
+      // Generate new code
+      const newCode = generateVerificationCode();
+      sessionStorage.setItem('verificationCode', newCode);
+      
+      // Update pending verification
+      if (window.pendingVerifications[email]) {
+        window.pendingVerifications[email].code = newCode;
+        window.pendingVerifications[email].attempts = 3;
+      }
+      
+      // Reset attempts
+      attemptsLeft = 3;
+      document.getElementById("attemptsWarning").style.display = "none";
+      
+      // Disable resend link temporarily
+      resendLink.classList.add('disabled');
+      resendLink.textContent = 'Sending...';
+      
+      try {
+        const emailSent = await sendVerificationEmail(email, username, newCode);
+        
+        if (emailSent) {
+          showSuccess('New verification code sent!');
+        } else {
+          // Demo mode fallback
+          showSuccess(`Demo: New code is ${newCode}`);
+        }
+        
+        // Start cooldown timer
+        startResendTimer();
+        
+      } catch (error) {
+        console.error('Resend failed:', error);
+        showError('Failed to resend code. Please try again.');
+        resendLink.classList.remove('disabled');
+        resendLink.textContent = 'Resend Code';
+      }
+    }
+
+    function startResendTimer() {
+      const resendLink = document.getElementById('resendLink');
+      const timerSpan = document.getElementById('resendTimer');
+      
+      let timeLeft = resendCooldown;
+      
+      resendLink.style.display = 'none';
+      timerSpan.style.display = 'inline';
+      timerSpan.textContent = `(${timeLeft}s)`;
+      
+      resendTimer = setInterval(() => {
+        timeLeft--;
+        timerSpan.textContent = `(${timeLeft}s)`;
+        
+        if (timeLeft <= 0) {
+          clearInterval(resendTimer);
+          resendLink.style.display = 'inline';
+          resendLink.classList.remove('disabled');
+          resendLink.textContent = 'Resend Code';
+          timerSpan.style.display = 'none';
+        }
+      }, 1000);
+    }
+
+    // Clear any existing timers on page load
+    if (resendTimer) {
+      clearInterval(resendTimer);
+    }
+
+    // Debug function to test email sending
+    async function testEmailSending() {
+      const email = sessionStorage.getItem('userEmail') || prompt('Enter test email:');
+      if (!email) return;
+      
+      const testCode = '123456';
+      console.log('=== TESTING EMAIL SENDING ===');
+      console.log('Email:', email);
+      console.log('Service ID: Smart_Track_Demo123');
+      console.log('Template ID: template_f2ezmje');
+      console.log('Public Key: nEOog_PJ9r2Y4bStM');
+      
+      try {
+        const result = await sendVerificationEmail(email, 'Test User', testCode);
+        if (result) {
+          alert('✅ Test email sent successfully! Check your inbox.');
+        } else {
+          alert('❌ Test email failed. Check console for details.');
+        }
+      } catch (error) {
+        console.error('Test failed:', error);
+        alert('❌ Test error: ' + error.message);
+      }
     }
   </script>
 </body>
